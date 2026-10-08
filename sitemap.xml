@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://abuelectric.uz/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
-  <url><loc>https://abuelectric.uz/privacy-policy.html</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://abuelectric.uz/</loc></url>
+  <url><loc>https://abuelectric.uz/qidiruv/</loc></url>
+  <url><loc>https://abuelectric.uz/kirish/</loc></url>
+  <url><loc>https://abuelectric.uz/biz-haqimizda/</loc></url>
+  <url><loc>https://abuelectric.uz/privacy-policy.html</loc></url>
+  <url><loc>https://abuelectric.uz/viloyat/qoraqalpogiston/</loc></url>
+  <url><loc>https://abuelectric.uz/viloyat/andijon/</loc></url>
+  <url><loc>https://abuelectric.uz/viloyat/buxoro/</loc></url>
+  <url><loc>https://abuelectric.uz/viloyat/fargona/</loc></url>
+  <url><loc>https://abuelectric.uz/viloyat/jizzax/</loc></url>
+  <url><loc>https://abuelectric.uz/viloyat/xorazm/</loc></url>
+  <url><loc>https://abuelectric.uz/viloyat/namangan/</loc></url>
+  <url><loc>https://abuelectric.uz/viloyat/navoiy/</loc></url>
+  <url><loc>https://abuelectric.uz/viloyat/qashqadaryo/</loc></url>
+  <url><loc>https://abuelectric.uz/viloyat/samarqand/</loc></url>
+  <url><loc>https://abuelectric.uz/viloyat/sirdaryo/</loc></url>
+  <url><loc>https://abuelectric.uz/viloyat/surxondaryo/</loc></url>
+  <url><loc>https://abuelectric.uz/viloyat/toshkent-viloyati/</loc></url>
+  <url><loc>https://abuelectric.uz/viloyat/toshkent-shahri/</loc></url>
 </urlset>
