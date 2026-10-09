@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Elektrik kerakmi? O'zbekiston bo'ylab elektriklar katalogi — AbuElectric</title>
+<meta name="description" content="O'zbekistonning barcha viloyat va tumanlaridagi elektriklar bir joyda. Rozetka, avtomat, sim tortish, yoritish, avariya — ustani toping va to'g'ridan-to'g'ri qo'ng'iroq qiling.">
+<meta name="theme-color" content="#0b1526">
+<link rel="canonical" href="https://abuelectric.uz/elektriklar/">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/assets/img/app-192.png" type="image/png">
+<link rel="apple-touch-icon" href="/assets/img/app-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="AbuElectric">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="AbuElectric">
+<meta property="og:title" content="Elektrik kerakmi? Bir daqiqada toping — AbuElectric">
+<meta property="og:description" content="O'zbekiston bo'ylab elektriklar katalogi. Viloyat, tuman va xizmat turi bo'yicha qidiring.">
+<meta property="og:url" content="https://abuelectric.uz/elektriklar/">
+<meta property="og:image" content="https://abuelectric.uz/assets/img/og-katalog.png">
+<meta property="og:locale" content="uz_UZ">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap">
+<link rel="stylesheet" href="/assets/css/app.css?v=3">
+<link rel="modulepreload" href="/assets/js/ui.js">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebSite","name":"AbuElectric","url":"https://abuelectric.uz/",
+ "potentialAction":{"@type":"SearchAction","target":"https://abuelectric.uz/qidiruv/?v={viloyat}","query-input":"required name=viloyat"}}
+</script>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="/elektriklar/" aria-label="AbuElectric elektriklar katalogi"><i><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M13.2 2.5 4.8 13.2c-.4.5 0 1.3.6 1.3H11l-1.2 7c-.1.7.8 1.1 1.3.5l8.4-10.7c.4-.5 0-1.3-.6-1.3H13l1.2-7c.1-.7-.8-1.1-1.3-.5Z"/></svg></i><b>Abu<span>Electric</span></b></a>
+    <button class="menu-btn" id="menuBtn" aria-label="Menyu" aria-expanded="false" aria-controls="nav">☰</button>
+    <nav class="nav" id="nav">
+      <a href="/qidiruv/">Elektrik topish</a>
+      <a href="/kabinet/">Kabinet</a>
+      <a class="cta" href="/kirish/">Usta bo'lib qo'shilish</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <h1>Elektrik kerakmi?<br><em>Bir daqiqada toping.</em></h1>
+      <p>O'zbekistonning barcha viloyat va tumanlaridagi elektriklar. Tanlang va to'g'ridan-to'g'ri qo'ng'iroq qiling, vositachisiz.</p>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <form class="search-card" id="searchForm" role="search">
+      <div class="search-grid">
+        <div class="field"><label for="v">Viloyat</label><select id="v" name="v"></select></div>
+        <div class="field"><label for="t">Tuman</label><select id="t" name="t"></select></div>
+        <div class="field"><label for="x">Xizmat turi</label><select id="x" name="x"></select></div>
+        <button class="btn btn-volt" type="submit">🔍 Qidirish</button>
+      </div>
+      <label class="toggle"><input type="checkbox" name="bosh"><span class="sw"></span>Faqat hozir bo'sh ustalar</label>
+    </form>
+
+    <section class="section">
+      <div class="section-head"><h2>Qanday ish kerak?</h2></div>
+      <div class="svc-grid" id="svcGrid"></div>
+    </section>
+
+    <section class="section">
+      <div class="section-head"><h2>Eng yaxshi baholangan ustalar</h2><a href="/qidiruv/">Hammasi ›</a></div>
+      <div class="list" id="top"></div>
+    </section>
+
+    <section class="join">
+      <div>
+        <h2>Siz elektrikmisiz? <em>Bepul qo'shiling.</em></h2>
+        <p>Profil oching, mijozlar o'zi qo'ng'iroq qiladi. Boshqa viloyatga borsangiz, u yerda ham ish toping.</p>
+        <ul>
+          <li>✓ Ro'yxatdan o'tish bepul</li>
+          <li>✓ "Hozir bo'shman" tugmasi bilan qidiruvda yuqorida chiqing</li>
+          <li>✓ "Vaqtincha boraman": boshqa shaharda ham mijoz toping</li>
+        </ul>
+      </div>
+      <a class="btn btn-volt" href="/kirish/">Ro'yxatdan o'tish</a>
+    </section>
+
+    <section class="section">
+      <div class="section-head"><h2>Viloyatlar bo'yicha</h2></div>
+      <div class="regions" id="regions"></div>
+    </section>
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <span>© 2026 AbuElectric · ABUELECTRIC MCHJ</span>
+    <nav>
+      <a href="/">ABUELECTRIC bosh sahifa</a>
+      <a href="/kirish/">Ustalar uchun</a>
+      <a href="https://t.me/abuelectricuz_ooo" target="_blank" rel="noopener">Telegram</a>
+    </nav>
+  </div>
+</footer>
+
+<script type="module" src="/assets/js/pages/home.js?v=1"></script>
+</body>
+</html>

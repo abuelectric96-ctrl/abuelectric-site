@@ -464,3 +464,21 @@ p { margin: 0; }
   .steps { grid-template-columns: 1fr; }
   .contact { margin-top: 84px; padding: 44px 20px; border-radius: 24px; }
 }
+
+/* ---------- Elektrik topish (katalogga kirish) ---------- */
+.nav a.nav-hot { color: var(--volt); }
+.finder {
+  display: grid; grid-template-columns: 1.2fr .8fr; gap: 32px; align-items: center;
+  padding: 36px; border-radius: 28px; color: #fff;
+  background: radial-gradient(500px 260px at 90% 10%, #1a6b4d, transparent 70%), var(--green-900);
+}
+.finder .kicker { color: var(--volt); }
+.finder h2 { color: #fff; }
+.finder-text p { color: rgba(255, 255, 255, .72); margin-top: 14px; font-size: 18px; }
+.finder-form { display: grid; gap: 12px; background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 255, 255, .12); border-radius: 20px; padding: 20px; }
+.finder-form label { font-weight: 700; font-size: 14px; color: rgba(255, 255, 255, .75); }
+.finder-form select { min-height: 54px; border-radius: 14px; border: 0; padding: 0 14px; font: 600 17px var(--font); background: #fff; color: #13201a; }
+.finder-form .btn { width: 100%; }
+.finder-join { color: var(--volt); font-weight: 700; text-decoration: none; text-align: center; font-size: 15px; }
+.finder-join:hover { text-decoration: underline; }
+@media (max-width: 860px) { .finder { grid-template-columns: 1fr; padding: 26px 18px; } }

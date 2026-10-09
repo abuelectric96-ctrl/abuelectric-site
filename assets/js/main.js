@@ -45,3 +45,11 @@
   var y = document.getElementById('year');
   if (y) y.textContent = new Date().getFullYear();
 })();
+
+// Hamkor havolasi: abuelectric.uz/?ref=nom — katalogda ro'yxatdan o'tishda hisobga olinadi (ui.js bilan bir xil format)
+(function () {
+  try {
+    var ref = new URLSearchParams(location.search).get('ref');
+    if (ref && /^[a-z0-9_-]{2,32}$/i.test(ref)) localStorage.setItem('ae_ref', JSON.stringify({ ref: ref.toLowerCase(), at: Date.now() }));
+  } catch (e) {}
+})();

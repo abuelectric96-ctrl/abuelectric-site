@@ -3,7 +3,7 @@
   "short_name": "AbuElectric",
   "description": "O'zbekiston bo'ylab elektrik toping",
   "lang": "uz",
-  "start_url": "/?source=pwa",
+  "start_url": "/elektriklar/?source=pwa",
   "scope": "/",
   "display": "standalone",
   "background_color": "#0b1526",

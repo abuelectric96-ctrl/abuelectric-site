@@ -2,109 +2,454 @@
 <html lang="uz">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Elektrik kerakmi? O'zbekiston bo'ylab elektriklar katalogi — AbuElectric</title>
-<meta name="description" content="O'zbekistonning barcha viloyat va tumanlaridagi elektriklar bir joyda. Rozetka, avtomat, sim tortish, yoritish, avariya — ustani toping va to'g'ridan-to'g'ri qo'ng'iroq qiling.">
-<meta name="theme-color" content="#0b1526">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ABUELECTRIC — elektrik ilovalari, elektr xizmatlari va elektriklar katalogi</title>
+<meta name="description" content="ABUELECTRIC — Abu-Ustoz elektrik simulyatori va boshqa foydali ilovalar mualliflari. Amudaryo va atrof tumanlarda elektr montaj, ta'mirlash va energiya audit xizmatlari. Buyurtma asosida mobil ilova va Telegram botlar.">
+<meta name="theme-color" content="#062a1e">
 <link rel="canonical" href="https://abuelectric.uz/">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/assets/img/abu-logo-64.png" type="image/png">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
 <link rel="manifest" href="/manifest.webmanifest">
-<link rel="icon" href="/assets/img/app-192.png" type="image/png">
-<link rel="apple-touch-icon" href="/assets/img/app-180.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="AbuElectric">
 
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="AbuElectric">
-<meta property="og:title" content="Elektrik kerakmi? Bir daqiqada toping — AbuElectric">
-<meta property="og:description" content="O'zbekiston bo'ylab elektriklar katalogi. Viloyat, tuman va xizmat turi bo'yicha qidiring.">
+<meta property="og:site_name" content="ABUELECTRIC">
+<meta property="og:title" content="ABUELECTRIC — elektrni bilamiz, kodni yozamiz">
+<meta property="og:description" content="Abu-Ustoz elektrik simulyatori, foydali ilovalar va Amudaryodagi elektr xizmatlari.">
 <meta property="og:url" content="https://abuelectric.uz/">
-<meta property="og:image" content="https://abuelectric.uz/assets/img/og-katalog.png">
+<meta property="og:image" content="https://abuelectric.uz/assets/img/og.png">
 <meta property="og:locale" content="uz_UZ">
 <meta name="twitter:card" content="summary_large_image">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap">
-<link rel="stylesheet" href="/assets/css/app.css?v=3">
-<link rel="modulepreload" href="/assets/js/ui.js">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@600;700&display=swap">
+<link rel="stylesheet" href="/assets/css/style.css?v=2">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebSite","name":"AbuElectric","url":"https://abuelectric.uz/",
- "potentialAction":{"@type":"SearchAction","target":"https://abuelectric.uz/qidiruv/?v={viloyat}","query-input":"required name=viloyat"}}
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://abuelectric.uz/#org",
+      "name": "ABUELECTRIC",
+      "legalName": "ABUELECTRIC MCHJ",
+      "url": "https://abuelectric.uz/",
+      "logo": "https://abuelectric.uz/assets/img/abu-logo-512.png",
+      "email": "abuustoz@gmail.com",
+      "founder": { "@type": "Person", "name": "Ashirov Bahram" },
+      "sameAs": ["https://www.instagram.com/abuelectric.uz/", "https://t.me/abuelectricuz_ooo"]
+    },
+    {
+      "@type": "Electrician",
+      "name": "ABUELECTRIC — elektr xizmatlari",
+      "parentOrganization": { "@id": "https://abuelectric.uz/#org" },
+      "areaServed": "Amudaryo tumani, Qoraqalpog'iston Respublikasi",
+      "address": { "@type": "PostalAddress", "addressLocality": "Amudaryo tumani", "addressRegion": "Qoraqalpog'iston", "addressCountry": "UZ" },
+      "url": "https://abuelectric.uz/#elektr"
+    },
+    {
+      "@type": "MobileApplication",
+      "name": "Abu-Ustoz — elektrik simulyatori",
+      "operatingSystem": "Android",
+      "applicationCategory": "EducationalApplication",
+      "url": "https://play.google.com/store/apps/details?id=com.abuustoz.elektrik",
+      "author": { "@id": "https://abuelectric.uz/#org" },
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+    }
+  ]
+}
 </script>
 </head>
 <body>
-<header class="top">
+<a class="skip" href="#main">Asosiy qismga o'tish</a>
+
+<!-- Ikonkalar -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-bolt" viewBox="0 0 24 24"><path fill="currentColor" d="M13.2 2.5 4.8 13.2c-.4.5 0 1.3.6 1.3H11l-1.2 7c-.1.7.8 1.1 1.3.5l8.4-10.7c.4-.5 0-1.3-.6-1.3H13l1.2-7c.1-.7-.8-1.1-1.3-.5Z"/></symbol>
+    <symbol id="i-tg" viewBox="0 0 24 24"><path fill="currentColor" d="M21.4 4.1 18.3 19c-.2 1-.9 1.3-1.8.8l-4.7-3.5-2.3 2.2c-.3.3-.5.5-1 .5l.3-4.8 8.7-7.9c.4-.3-.1-.5-.6-.2L6.2 12.9l-4.6-1.4c-1-.3-1-1 .2-1.5l18-6.9c.8-.3 1.6.2 1.6 1Z"/></symbol>
+    <symbol id="i-ig" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/></g><circle cx="17.3" cy="6.7" r="1.2" fill="currentColor"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m4 7 8 6 8-6"/></g></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></g></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-5-5 5 5-5 5"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path fill="#34d399" d="M3.6 2.3 13.4 12 3.6 21.7c-.4-.2-.6-.6-.6-1.1V3.4c0-.5.2-.9.6-1.1Z"/><path fill="#fbbf24" d="m16.8 8.6-3.4 3.4 3.4 3.4 3.8-2.2c.8-.5.8-1.7 0-2.2l-3.8-2.4Z"/><path fill="#60a5fa" d="M3.6 2.3c.3-.2.8-.2 1.2 0l12 6.3-3.4 3.4L3.6 2.3Z"/><path fill="#f87171" d="m13.4 12 3.4 3.4-12 6.3c-.4.2-.9.2-1.2 0l9.8-9.7Z"/></symbol>
+    <symbol id="i-plug" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 2v5m6-5v5M6 7h12v4a6 6 0 0 1-12 0V7Zm6 10v5"/></g></symbol>
+    <symbol id="i-panel" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h2v4H8zm6 0h2v4h-2zM8 16h8"/></g></symbol>
+    <symbol id="i-wrench" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M14.7 6.3a4 4 0 0 0 5 5L21 13l-8 8-3-3 7.2-7.2a4 4 0 0 1-5-5L13.5 4l1.2 2.3ZM3 21l5-5"/></symbol>
+    <symbol id="i-bulb" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6m-5 3h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V16h5v-.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3Z"/></g></symbol>
+    <symbol id="i-gauge" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4.9 18a9 9 0 1 1 14.2 0"/><path d="m12 14 4-5"/><circle cx="12" cy="14" r="1.5" fill="currentColor"/></g></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M4 5h16v11H9l-5 4V5Z"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="2.5" width="12" height="19" rx="3"/><path stroke-linecap="round" d="M10.5 18.5h3"/></g></symbol>
+    <symbol id="i-bot" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="8" width="16" height="12" rx="4"/><path d="M12 4v4M9 14h.01M15 14h.01"/></g></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3Z"/></g></symbol>
+    <symbol id="i-wallet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 7h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7Zm0 0 11-3v3"/><circle cx="16" cy="13.5" r="1.2" fill="currentColor"/></g></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10m6 10V4m6 16v-7m4 7H3"/></g></symbol>
+    <symbol id="i-tools" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20 14 10m2.5-6.5 4 4-3 3-4-4 3-3ZM4 4l5 5"/></g></symbol>
+  </defs>
+</svg>
+
+<header class="header" id="top">
   <div class="wrap">
-    <a class="logo" href="/" aria-label="AbuElectric bosh sahifa"><i><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M13.2 2.5 4.8 13.2c-.4.5 0 1.3.6 1.3H11l-1.2 7c-.1.7.8 1.1 1.3.5l8.4-10.7c.4-.5 0-1.3-.6-1.3H13l1.2-7c.1-.7-.8-1.1-1.3-.5Z"/></svg></i><b>Abu<span>Electric</span></b></a>
-    <button class="menu-btn" id="menuBtn" aria-label="Menyu" aria-expanded="false" aria-controls="nav">☰</button>
-    <nav class="nav" id="nav">
-      <a href="/qidiruv/">Elektrik topish</a>
-      <a href="/kabinet/">Kabinet</a>
-      <a class="cta" href="/kirish/">Usta bo'lib qo'shilish</a>
+    <a class="brand" href="/" aria-label="ABUELECTRIC bosh sahifa">
+      <img src="/assets/img/abu-logo-64.png" alt="" width="38" height="38">
+      <b>ABU<span>ELECTRIC</span></b>
+    </a>
+    <nav class="nav" id="nav" aria-label="Asosiy menyu">
+      <a href="/elektriklar/" class="nav-hot">⚡ Elektrik topish</a>
+      <a href="#ilovalar">Ilovalar</a>
+      <a href="#elektr">Elektr xizmatlari</a>
+      <a href="#buyurtma">Ilova buyurtma</a>
+      <a href="#haqimizda">Biz haqimizda</a>
+      <a href="#aloqa">Aloqa</a>
     </nav>
+    <button class="icon-btn theme-btn" id="themeBtn" type="button" aria-label="Mavzuni almashtirish">
+      <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"/></svg>
+    </button>
+    <a class="btn btn-volt header-cta" href="https://t.me/abuelectricuz_ooo" target="_blank" rel="noopener">
+      <svg><use href="#i-tg"/></svg>Yozish
+    </a>
+    <button class="icon-btn menu-btn" id="menuBtn" type="button" aria-label="Menyuni ochish" aria-expanded="false" aria-controls="nav">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
   </div>
 </header>
 
-<main>
+<main id="main">
+
+  <!-- HERO -->
   <section class="hero">
-    <div class="wrap">
-      <h1>Elektrik kerakmi?<br><em>Bir daqiqada toping.</em></h1>
-      <p>O'zbekistonning barcha viloyat va tumanlaridagi elektriklar. Tanlang va to'g'ridan-to'g'ri qo'ng'iroq qiling, vositachisiz.</p>
+    <svg class="circuit" viewBox="0 0 1440 760" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <path class="trace" d="M-20 610 H260 L330 540 H620 L680 600 H900"/>
+      <path class="trace" d="M760 -20 V120 L830 190 H1120 L1180 250 V520 L1240 580 H1460"/>
+      <path class="trace" d="M1460 330 H1300 L1240 270 V140 L1300 80 H1460"/>
+      <path class="pulse" d="M-20 610 H260 L330 540 H620 L680 600 H900"/>
+      <path class="pulse p2" d="M760 -20 V120 L830 190 H1120 L1180 250 V520 L1240 580 H1460"/>
+      <path class="pulse p3" d="M1460 330 H1300 L1240 270 V140 L1300 80 H1460"/>
+      <circle class="node" cx="900" cy="600" r="6"/>
+      <circle class="node" cx="1120" cy="190" r="6"/>
+      <circle class="node" cx="1240" cy="580" r="6"/>
+      <circle class="node" cx="1240" cy="270" r="6"/>
+    </svg>
+
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow">ABUELECTRIC MCHJ · Amudaryo</span>
+        <h1>Elektrni bilamiz.<br><em>Kodni yozamiz.<svg viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true"><path d="M2 9c40-6 120-8 196-3" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".55"/></svg></em></h1>
+        <p class="lead">Biz elektrik kasbini o'rgatuvchi Abu-Ustoz simulyatorini va boshqa foydali ilovalarni yaratamiz. Amudaryoda esa uyingiz va ishxonangiz elektr tarmog'ini o'zimiz o'rnatamiz va ta'mirlaymiz.</p>
+        <div class="hero-actions">
+          <a class="btn btn-volt" href="https://play.google.com/store/apps/details?id=com.abuustoz.elektrik" target="_blank" rel="noopener">
+            <svg><use href="#i-bolt"/></svg>Abu-Ustoz'ni yuklab olish
+          </a>
+          <a class="btn btn-ghost" href="/elektriklar/">Elektrik topish</a>
+        </div>
+        <div class="hero-meta">
+          <span><svg><use href="#i-pin"/></svg>Amudaryo, Qoraqalpog'iston</span>
+          <span><svg><use href="#i-phone"/></svg>Google Play'da mavjud</span>
+        </div>
+      </div>
+
+      <div class="phones" aria-hidden="true">
+        <div class="phone back"><img src="/assets/img/abu-ustoz-02.webp" alt="" width="432" height="902" loading="eager"></div>
+        <div class="phone front"><img src="/assets/img/abu-ustoz-04.webp" alt="" width="432" height="902" loading="eager" fetchpriority="high"></div>
+        <div class="spark"><i><svg><use href="#i-bolt"/></svg></i><span>Sxemani yig'ing<small>tok haqiqiydek oqadi</small></span></div>
+      </div>
     </div>
   </section>
 
-  <div class="wrap">
-    <form class="search-card" id="searchForm" role="search">
-      <div class="search-grid">
-        <div class="field"><label for="v">Viloyat</label><select id="v" name="v"></select></div>
-        <div class="field"><label for="t">Tuman</label><select id="t" name="t"></select></div>
-        <div class="field"><label for="x">Xizmat turi</label><select id="x" name="x"></select></div>
-        <button class="btn btn-volt" type="submit">🔍 Qidirish</button>
-      </div>
-      <label class="toggle"><input type="checkbox" name="bosh"><span class="sw"></span>Faqat hozir bo'sh ustalar</label>
-    </form>
-
-    <section class="section">
-      <div class="section-head"><h2>Qanday ish kerak?</h2></div>
-      <div class="svc-grid" id="svcGrid"></div>
-    </section>
-
-    <section class="section">
-      <div class="section-head"><h2>Eng yaxshi baholangan ustalar</h2><a href="/qidiruv/">Hammasi ›</a></div>
-      <div class="list" id="top"></div>
-    </section>
-
-    <section class="join">
-      <div>
-        <h2>Siz elektrikmisiz? <em>Bepul qo'shiling.</em></h2>
-        <p>Profil oching, mijozlar o'zi qo'ng'iroq qiladi. Boshqa viloyatga borsangiz, u yerda ham ish toping.</p>
-        <ul>
-          <li>✓ Ro'yxatdan o'tish bepul</li>
-          <li>✓ "Hozir bo'shman" tugmasi bilan qidiruvda yuqorida chiqing</li>
-          <li>✓ "Vaqtincha boraman": boshqa shaharda ham mijoz toping</li>
-        </ul>
-      </div>
-      <a class="btn btn-volt" href="/kirish/">Ro'yxatdan o'tish</a>
-    </section>
-
-    <section class="section">
-      <div class="section-head"><h2>Viloyatlar bo'yicha</h2></div>
-      <div class="regions" id="regions"></div>
-    </section>
+  <!-- FAKTLAR -->
+  <div class="wrap facts">
+    <div class="facts-grid reveal">
+      <div class="fact"><b>60+</b><span>elektr komponenti</span></div>
+      <div class="fact"><b>14</b><span>bosqichli dars</span></div>
+      <div class="fact"><b>124</b><span>tilda ishlaydi</span></div>
+      <div class="fact"><b>6</b><span>ta o'z loyihamiz</span></div>
+    </div>
   </div>
+
+  <!-- ELEKTRIK TOPISH -->
+  <section class="section" id="topish">
+    <div class="wrap">
+      <div class="finder reveal">
+        <div class="finder-text">
+          <span class="kicker">Yangi · Elektriklar katalogi</span>
+          <h2>O'zbekiston bo'ylab elektrik toping</h2>
+          <p>14 viloyat va barcha tumanlardagi ustalar bir joyda. Viloyatni tanlang va to'g'ridan-to'g'ri qo'ng'iroq qiling. Hozir bo'sh ustalar yashil belgi bilan ko'rinadi.</p>
+        </div>
+        <form class="finder-form" action="/qidiruv/" method="get">
+          <label for="finderV">Qaysi viloyatda?</label>
+          <select id="finderV" name="v"><option value="">Butun O'zbekiston</option><option value="qoraqalpogiston">Qoraqalpog'iston Respublikasi</option><option value="andijon">Andijon viloyati</option><option value="buxoro">Buxoro viloyati</option><option value="fargona">Farg'ona viloyati</option><option value="jizzax">Jizzax viloyati</option><option value="xorazm">Xorazm viloyati</option><option value="namangan">Namangan viloyati</option><option value="navoiy">Navoiy viloyati</option><option value="qashqadaryo">Qashqadaryo viloyati</option><option value="samarqand">Samarqand viloyati</option><option value="sirdaryo">Sirdaryo viloyati</option><option value="surxondaryo">Surxondaryo viloyati</option><option value="toshkent-viloyati">Toshkent viloyati</option><option value="toshkent-shahri">Toshkent shahri</option></select>
+          <button class="btn btn-volt" type="submit"><svg><use href="#i-bolt"/></svg>Elektrik topish</button>
+          <a class="finder-join" href="/kirish/">Siz elektrikmisiz? Bepul ro'yxatdan o'ting ›</a>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ILOVALAR -->
+  <section class="section" id="ilovalar">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div>
+          <span class="kicker">Ilovalarimiz</span>
+          <h2>Har kuni ishlatsa bo'ladigan ilovalar</h2>
+        </div>
+        <p>Har bir ilovani o'zimiz o'ylab topamiz, yozamiz va qo'llab-quvvatlaymiz. Avval o'z muammomizni hal qilamiz, keyin hammaga beramiz.</p>
+      </div>
+
+      <article class="card flagship reveal">
+        <div class="flagship-body">
+          <div class="app-id">
+            <img src="/assets/img/abu-logo-192.png" alt="Abu-Ustoz ikonkasi" width="60" height="60" loading="lazy">
+            <div>
+              <h3>Abu-Ustoz</h3>
+              <small>Elektrik simulyatori · Ta'lim</small>
+            </div>
+          </div>
+          <p>O'zbekistondagi birinchi elektrik o'qitish simulyatori. Telefoningizda xavfsiz sxema yig'ing: avtomat, UZO, hisoblagich, rozetka va chiroqlarni ulang. Xato qilsangiz, ilova sababini tushuntirib beradi.</p>
+          <ul class="ticks">
+            <li>60+ haqiqiy elektr komponenti</li>
+            <li>14 bosqichli darslar</li>
+            <li>Elektr kalkulyatori</li>
+            <li>Sxema belgilari lug'ati</li>
+            <li>Sun'iy intellekt yordamchi</li>
+            <li>124 tilda, internetsiz ham</li>
+          </ul>
+          <div class="store-row">
+            <a class="store-btn" href="https://play.google.com/store/apps/details?id=com.abuustoz.elektrik" target="_blank" rel="noopener">
+              <svg><use href="#i-play"/></svg><span><small>Yuklab olish</small><b>Google Play</b></span>
+            </a>
+          </div>
+        </div>
+        <div class="flagship-shots" aria-hidden="true">
+          <div class="phone s1"><img src="/assets/img/abu-ustoz-01.webp" alt="" width="432" height="902" loading="lazy"></div>
+          <div class="phone s2"><img src="/assets/img/abu-ustoz-03.webp" alt="" width="432" height="902" loading="lazy"></div>
+        </div>
+      </article>
+
+      <div class="apps">
+        <article class="card app reveal">
+          <div class="app-top">
+            <div class="app-icon"><img src="/assets/img/99plus1-icon.png" alt="99+1 ikonkasi" width="52" height="52" loading="lazy"></div>
+            <span class="tag soon">Tez orada</span>
+          </div>
+          <h3>99+1 · Asma ul-Husna</h3>
+          <p>Allohning 99 go'zal ismini har kuni bir necha daqiqada yodlang. Belgilangan vaqtda yumshoq eslatma keladi, savollarga javob berasiz, ketma-ket kunlar sanog'i sizni ruhlantiradi.</p>
+          <a class="more" href="/privacy-policy.html">Maxfiylik siyosati <svg width="16" height="16"><use href="#i-arrow"/></svg></a>
+        </article>
+
+        <article class="card app reveal">
+          <div class="app-top">
+            <div class="app-icon" style="background:#e9f2ff;color:#2563eb"><svg><use href="#i-wallet"/></svg></div>
+            <span class="tag soon">Ishlab chiqilmoqda</span>
+          </div>
+          <h3>Deptor</h3>
+          <p>Qarz daftari va kundalik xarajatlar bir joyda. Kim qancha qarzdor, oyiga qancha sarfladingiz: haftalik, oylik va yillik hisobotlar bilan ko'rasiz.</p>
+        </article>
+
+        <article class="card app reveal">
+          <div class="app-top">
+            <div class="app-icon" style="background:linear-gradient(135deg,#f9ce34,#ee2a7b,#6228d7);color:#fff"><svg><use href="#i-chat"/></svg></div>
+            <span class="tag live">Ishlamoqda</span>
+          </div>
+          <h3>ABU-chat</h3>
+          <p>Instagram biznes akkauntlari uchun avtomatik javob. Kimdir postingizga izoh qoldirsa, unga darhol javob va kerakli havola boradi.</p>
+        </article>
+
+        <article class="card app reveal">
+          <div class="app-top">
+            <div class="app-icon" style="background:var(--volt-soft);color:#a16a00"><svg><use href="#i-gauge"/></svg></div>
+            <span class="tag">Loyiha</span>
+          </div>
+          <h3>Energy Audit</h3>
+          <p>Uy va korxonalarda energiya sarfini hisoblash, audit hisobotini tayyorlash va tejash bo'yicha aniq tavsiyalar beruvchi professional vosita.</p>
+        </article>
+
+        <article class="card app reveal">
+          <div class="app-top">
+            <div class="app-icon" style="background:var(--green-100);color:var(--accent)"><svg><use href="#i-tools"/></svg></div>
+            <span class="tag">Loyiha</span>
+          </div>
+          <h3>Abu Servis</h3>
+          <p>Ustalar va mijozlarni bog'laydigan xizmatlar bozori. Tuman bo'yicha qidiruv, usta profili va to'g'ridan-to'g'ri yozishmalar.</p>
+        </article>
+
+        <article class="card app reveal">
+          <div class="app-top">
+            <div class="app-icon" style="background:var(--surface-2);color:var(--text)"><svg><use href="#i-arrow"/></svg></div>
+          </div>
+          <h3>Sizning g'oyangiz</h3>
+          <p>Biznesingiz yoki ishingiz uchun o'z ilovangiz kerakmi? Biz bilan gaplashing: g'oyani birga ishlaydigan mahsulotga aylantiramiz.</p>
+          <a class="more" href="#buyurtma">Ilova buyurtma qilish <svg width="16" height="16"><use href="#i-arrow"/></svg></a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ELEKTR XIZMATLARI -->
+  <section class="electric" id="elektr">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div>
+          <span class="kicker">Elektr xizmatlari</span>
+          <h2>Uyingizdagi tok xavfsiz va ishonchli bo'lsin</h2>
+        </div>
+        <p>Amudaryo tumani va atrofida ishlaymiz. Har bir ishni o'z uyimizdagidek, me'yor va xavfsizlik qoidalariga rioya qilib bajaramiz.</p>
+      </div>
+
+      <div class="services">
+        <div class="service reveal">
+          <div class="ico"><svg><use href="#i-plug"/></svg></div>
+          <h3>Elektr montaj</h3>
+          <p>Yangi uy va ta'mirdan keyin to'liq simlash: kabel tortish, rozetka, o'chirgich va chiroqlarni o'rnatish.</p>
+        </div>
+        <div class="service reveal">
+          <div class="ico"><svg><use href="#i-panel"/></svg></div>
+          <h3>Elektr shiti yig'ish</h3>
+          <p>Avtomat, UZO, kuchlanish relesi va hisoblagich bilan to'g'ri yig'ilgan, belgilangan shit.</p>
+        </div>
+        <div class="service reveal">
+          <div class="ico"><svg><use href="#i-wrench"/></svg></div>
+          <h3>Nosozlikni topish</h3>
+          <p>Avtomat tushib qolyaptimi, tok yo'qmi, sim qiziyaptimi? Sababini topib, joyida bartaraf qilamiz.</p>
+        </div>
+        <div class="service reveal">
+          <div class="ico"><svg><use href="#i-bulb"/></svg></div>
+          <h3>Yoritish</h3>
+          <p>LED yoritish, lyustra va spot chiroqlar, hovli va ko'cha yoritgichlari, harakat sensorlari.</p>
+        </div>
+        <div class="service reveal">
+          <div class="ico"><svg><use href="#i-gauge"/></svg></div>
+          <h3>Energiya audit</h3>
+          <p>Qayerda tok behuda sarflanayotganini aniqlaymiz va to'lovni kamaytirish uchun aniq yo'llarni ko'rsatamiz.</p>
+        </div>
+        <div class="service reveal">
+          <div class="ico"><svg><use href="#i-chat"/></svg></div>
+          <h3>Maslahat</h3>
+          <p>Kabel kesimi, avtomat tanlash, uch fazali ulanish va boshqa savollar bo'yicha tushunarli javob.</p>
+        </div>
+      </div>
+
+      <div class="callout reveal">
+        <div>
+          <b>Elektrik kerakmi? Telegram'da yozing.</b>
+          <span>Muammoni yozing yoki rasmini yuboring, narx va vaqtni kelishamiz.</span>
+        </div>
+        <a class="btn" href="https://t.me/abuelectricuz_ooo" target="_blank" rel="noopener"><svg><use href="#i-tg"/></svg>Elektrik chaqirish</a>
+        <a class="btn" href="/elektriklar/" style="background:#fff;color:#1a1400">Boshqa viloyatdagi ustalar ›</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- BUYURTMA -->
+  <section class="section" id="buyurtma">
+    <div class="wrap">
+      <div class="build">
+        <div class="build-intro reveal">
+          <span class="kicker">Ilova buyurtma</span>
+          <h2>G'oyangizni ishlaydigan mahsulotga aylantiramiz</h2>
+          <p>O'z ilovalarimizni Google Play'ga chiqargan tajribamiz bilan sizga ham yordam beramiz: rejalashtirishdan tortib do'konga joylash va keyingi qo'llab-quvvatlashgacha.</p>
+          <a class="btn btn-primary" href="https://t.me/abuelectricuz_ooo" target="_blank" rel="noopener"><svg><use href="#i-tg"/></svg>Loyihani muhokama qilish</a>
+        </div>
+        <div class="offer">
+          <div class="card reveal">
+            <div class="ico"><svg><use href="#i-phone"/></svg></div>
+            <h3>Mobil ilova</h3>
+            <p>Flutter'da Android va iOS uchun bitta kod. To'lovlar, bildirishnomalar, ko'p tillilik.</p>
+          </div>
+          <div class="card reveal">
+            <div class="ico"><svg><use href="#i-bot"/></svg></div>
+            <h3>Telegram bot va Mini App</h3>
+            <p>Buyurtma qabul qilish, ro'yxatdan o'tkazish, Telegram Stars orqali to'lov.</p>
+          </div>
+          <div class="card reveal">
+            <div class="ico"><svg><use href="#i-chat"/></svg></div>
+            <h3>Instagram avtomatlashtirish</h3>
+            <p>Izoh va xabarlarga avtomatik javob. Kuniga mingtalab mijozga ham ulguramiz.</p>
+          </div>
+          <div class="card reveal">
+            <div class="ico"><svg><use href="#i-globe"/></svg></div>
+            <h3>Veb-sayt</h3>
+            <p>Tez ochiladigan, telefonda qulay, Google'da topiladigan sayt.</p>
+          </div>
+        </div>
+      </div>
+
+      <ol class="steps reveal">
+        <li><b>Suhbat</b><span>Vazifani tushunamiz, narx va muddatni aniq aytamiz.</span></li>
+        <li><b>Dizayn</b><span>Ekranlarni ko'rsatamiz, siz tasdiqlaysiz.</span></li>
+        <li><b>Ishlab chiqish</b><span>Har bosqichda sinab ko'rish uchun versiya berib boramiz.</span></li>
+        <li><b>Ishga tushirish</b><span>Do'konga joylaymiz va keyin ham yordam beramiz.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- HAQIMIZDA -->
+  <section class="section" id="haqimizda">
+    <div class="wrap about">
+      <div class="about-card reveal">
+        <img src="/assets/img/abu-logo-512.png" alt="ABU logotipi" width="512" height="512" loading="lazy">
+        <div class="badge"><b>Ashirov Bahram (ABU)</b><span>Asoschi · elektrik va Flutter dasturchi</span></div>
+      </div>
+      <div class="about-text reveal">
+        <span class="kicker">Biz haqimizda</span>
+        <h2>Ustaxonadan chiqqan dasturchi</h2>
+        <p>Assalomu alaykum! Men <strong>Ashirov Bahram</strong>, do'stlar uchun shunchaki <strong>ABU</strong>. Ko'p yillar elektrik bo'lib ishladim va ko'p yoshlar bu kasbni o'rganishga intilishini, lekin o'rganadigan joy topa olmasligini ko'rdim.</p>
+        <p>Shunday qilib <strong>Abu-Ustoz</strong> paydo bo'ldi: telefonda xavfsiz mashq qilsa bo'ladigan elektrik simulyatori. Bugun <strong>ABUELECTRIC MCHJ</strong> ikki yo'nalishda ishlaydi: odamlarga foydali ilovalar yaratamiz va Amudaryoda elektr xizmatlarini ko'rsatamiz.</p>
+        <div class="chips">
+          <span class="chip">⚡ Elektr montaj</span>
+          <span class="chip">📱 Flutter</span>
+          <span class="chip">🤖 Telegram botlar</span>
+          <span class="chip">🌍 O'zbek · Rus · Ingliz</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ALOQA -->
+  <section class="wrap" id="aloqa">
+    <div class="contact reveal">
+      <span class="kicker" style="color:var(--volt)">Aloqa</span>
+      <h2>Savol, buyurtma yoki taklif bormi?</h2>
+      <p>Eng tez javobni Telegram'da beramiz. Odatda bir necha soat ichida.</p>
+      <div class="links">
+        <a class="link" href="https://t.me/abuelectricuz_ooo" target="_blank" rel="noopener">
+          <i><svg><use href="#i-tg"/></svg></i><span><small>Telegram</small><b>@abuelectricuz_ooo</b></span>
+        </a>
+        <a class="link" href="https://www.instagram.com/abuelectric.uz/" target="_blank" rel="noopener">
+          <i><svg><use href="#i-ig"/></svg></i><span><small>Instagram</small><b>@abuelectric.uz</b></span>
+        </a>
+        <a class="link" href="mailto:abuustoz@gmail.com">
+          <i><svg><use href="#i-mail"/></svg></i><span><small>Email</small><b>abuustoz@gmail.com</b></span>
+        </a>
+      </div>
+    </div>
+  </section>
 </main>
 
-<footer class="foot">
+<footer class="footer">
   <div class="wrap">
-    <span>© 2026 AbuElectric · ABUELECTRIC MCHJ</span>
-    <nav>
-      <a href="/biz-haqimizda/">Biz haqimizda</a>
-      <a href="/kirish/">Ustalar uchun</a>
-      <a href="https://t.me/abuelectricuz_ooo" target="_blank" rel="noopener">Telegram</a>
-    </nav>
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="/"><img src="/assets/img/abu-logo-64.png" alt="" width="38" height="38" loading="lazy"><b>ABU<span>ELECTRIC</span></b></a>
+        <p>Elektrik ilovalari va elektr xizmatlari. Amudaryo tumani, Qoraqalpog'iston Respublikasi.</p>
+      </div>
+      <nav aria-label="Pastki menyu">
+        <a href="/elektriklar/" class="nav-hot">⚡ Elektrik topish</a>
+      <a href="#ilovalar">Ilovalar</a>
+        <a href="/elektriklar/">Elektrik topish</a>
+        <a href="#elektr">Elektr xizmatlari</a>
+        <a href="#buyurtma">Ilova buyurtma</a>
+        <a href="/privacy-policy.html">99+1 maxfiylik siyosati</a>
+      </nav>
+    </div>
+    <p class="copy">© <span id="year">2026</span> ABUELECTRIC MCHJ. Barcha huquqlar himoyalangan.</p>
   </div>
 </footer>
 
-<script type="module" src="/assets/js/pages/home.js?v=1"></script>
+<script src="/assets/js/main.js?v=2" defer></script>
 </body>
 </html>

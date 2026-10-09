@@ -38,7 +38,7 @@ function page({ path, title, description, h1, intro, bodyAttr = '', extra = '' }
 <body${bodyAttr}>
 <header class="top">
   <div class="wrap">
-    <a class="logo" href="/" aria-label="AbuElectric bosh sahifa"><i><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M13.2 2.5 4.8 13.2c-.4.5 0 1.3.6 1.3H11l-1.2 7c-.1.7.8 1.1 1.3.5l8.4-10.7c.4-.5 0-1.3-.6-1.3H13l1.2-7c.1-.7-.8-1.1-1.3-.5Z"/></svg></i><b>Abu<span>Electric</span></b></a>
+    <a class="logo" href="/elektriklar/" aria-label="AbuElectric elektriklar katalogi"><i><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M13.2 2.5 4.8 13.2c-.4.5 0 1.3.6 1.3H11l-1.2 7c-.1.7.8 1.1 1.3.5l8.4-10.7c.4-.5 0-1.3-.6-1.3H13l1.2-7c.1-.7-.8-1.1-1.3-.5Z"/></svg></i><b>Abu<span>Electric</span></b></a>
     <button class="menu-btn" id="menuBtn" aria-label="Menyu" aria-expanded="false" aria-controls="nav">☰</button>
     <nav class="nav" id="nav">
       <a href="/qidiruv/">Elektrik topish</a>
@@ -69,7 +69,7 @@ function page({ path, title, description, h1, intro, bodyAttr = '', extra = '' }
   <div class="wrap">
     <span>© 2026 AbuElectric · ABUELECTRIC MCHJ</span>
     <nav>
-      <a href="/biz-haqimizda/">Biz haqimizda</a>
+      <a href="/">ABUELECTRIC bosh sahifa</a>
       <a href="/kirish/">Ustalar uchun</a>
       <a href="https://t.me/abuelectricuz_ooo" target="_blank" rel="noopener">Telegram</a>
     </nav>
@@ -134,7 +134,7 @@ write('admin/index.html', appPage({
 }).replace('</main>', '</main>\n<dialog class="lightbox" id="docView" onclick="this.close()"><img alt="Tasdiqlash hujjati"></dialog>'));
 
 // sitemap.xml (ustalar profillari keyingi bosqichda qo'shiladi)
-const urls = ['/', '/qidiruv/', '/kirish/', '/biz-haqimizda/', '/privacy-policy.html', ...REGIONS.map((r) => `/viloyat/${r.slug}/`)];
+const urls = ['/', '/elektriklar/', '/qidiruv/', '/kirish/', '/privacy-policy.html', ...REGIONS.map((r) => `/viloyat/${r.slug}/`)];
 write('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map((u) => `  <url><loc>${SITE}${u}</loc></url>`).join('\n')}
