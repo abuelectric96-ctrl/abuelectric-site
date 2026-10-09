@@ -24,6 +24,14 @@ function toast(msg, bad = false) {
   setTimeout(() => t.remove(), 3500);
 }
 
+// Rasm bilan bog'liq xatolarni tushunarli qilib aytamiz
+function mediaError(err) {
+  const c = err?.code || '';
+  if (c === 'media/not-image' || c === 'media/bad-image') return "Bu faylni rasm sifatida ochib bo'lmadi. Galereyadan oddiy rasm (JPG) tanlang.";
+  if (c === 'media/too-big') return "Rasm juda katta. Boshqa rasm tanlang yoki skrinshot qilib yuklang.";
+  return friendlyError(err);
+}
+
 async function save(patch) {
   await fs.updateDoc(fs.doc(fs.db, 'electricians', user.uid), { ...patch, updatedAt: fs.serverTimestamp() });
   Object.assign(me, patch);
@@ -161,15 +169,15 @@ function bind() {
     const files = [...e.target.files].slice(0, MAX_WORKS - photos.length);
     if (!files.length) return;
     toast(`${files.length} ta rasm yuklanmoqda…`);
-    let added = 0;
+    let added = 0, lastErr = null;
     for (const f of files) {
       try {
         const data = await blobToDataURL(await compressForDb(f));
         await fs.addDoc(fs.collection(fs.db, 'photos'), { uid: user.uid, data, createdAt: fs.serverTimestamp() });
         added += 1;
-      } catch (err) { console.error(err); }
+      } catch (err) { console.error(err); lastErr = err; }
     }
-    if (!added) return toast("Rasmlarni yuklab bo'lmadi. Internetni tekshirib, qayta urinib ko'ring.", true);
+    if (!added) return toast(mediaError(lastErr), true);
     await loadPhotos(); toast(`${added} ta rasm qo'shildi`); render();
   });
   document.querySelectorAll('[data-del-work]').forEach((b) => b.addEventListener('click', async () => {
@@ -189,7 +197,7 @@ function bind() {
       await save({ verifyDocPath: 'verifications/' + user.uid });
       toast('Hujjat yuklandi. Admin ko\'rib chiqadi.');
       render();
-    } catch (err) { console.error(err); toast("Hujjatni yuklab bo'lmadi. Qayta urinib ko'ring.", true); }
+    } catch (err) { console.error(err); toast(mediaError(err), true); }
   });
 
   // Profilni tahrirlash

@@ -13,7 +13,6 @@ service cloud.firestore {
     function phone() { return request.auth.token.phone_number; }
     function hasPhone() { return signedIn() && phone() is string && phone().matches('^\\+998[0-9]{9}$'); }
     function isAdmin() { return signedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid)); }
-    function doc(path) { return /databases/$(database)/documents/$(path); }
 
     function validRegion(v) {
       return v in ['qoraqalpogiston', 'andijon', 'buxoro', 'fargona', 'jizzax', 'xorazm', 'namangan', 'navoiy',
@@ -39,7 +38,8 @@ service cloud.firestore {
         // profil rasmi: kichik data-URL (≈6 KB) yoki https havola
         && (!('photoURL' in d) || d.photoURL == ''
             || (d.photoURL is string && d.photoURL.size() <= 24000
-                && d.photoURL.matches('^(https://[^ ]+|data:image/(webp|jpeg);base64,[A-Za-z0-9+/=]+)$')))
+                && (d.photoURL.matches('^https://[^ ]+$')
+                    || d.photoURL.split(',')[0] in ['data:image/webp;base64', 'data:image/jpeg;base64'])))
         && (!('works' in d) || (d.works is list && d.works.size() <= 8))
         && (!('verifyDocPath' in d) || (d.verifyDocPath is string && d.verifyDocPath.matches('^verifications/[A-Za-z0-9]+$')))
         && (!('availableUntil' in d) || d.availableUntil == null
@@ -56,10 +56,10 @@ service cloud.firestore {
     // Sharh qo'shilganda shu batch ichida ustaning bahosini yangilash
     function ratingUpdate(uid) {
       let rid = uid + '_' + request.auth.uid;
-      let r = getAfter(doc('reviews/' + rid)).data;
+      let r = getAfter(/databases/$(database)/documents/reviews/$(rid)).data;
       let d = request.resource.data;
       return hasPhone() && request.auth.uid != uid
-        && !exists(doc('reviews/' + rid)) && existsAfter(doc('reviews/' + rid))
+        && !exists(/databases/$(database)/documents/reviews/$(rid)) && existsAfter(/databases/$(database)/documents/reviews/$(rid))
         && d.diff(resource.data).affectedKeys().hasOnly(['ratingSum', 'ratingCount', 'ratingAvg'])
         && d.ratingCount == resource.data.ratingCount + 1
         && d.ratingSum == resource.data.ratingSum + r.rating
@@ -95,7 +95,7 @@ service cloud.firestore {
       allow create: if hasPhone()
         && request.resource.data.keys().hasOnly(['uid', 'viloyat', 'tuman', 'from', 'to', 'createdAt'])
         && request.resource.data.uid == request.auth.uid
-        && exists(doc('electricians/' + request.auth.uid))
+        && exists(/databases/$(database)/documents/electricians/$(request.auth.uid))
         && validRegion(request.resource.data.viloyat)
         && str(request.resource.data.tuman, 0, 60)
         && request.resource.data.from is timestamp && request.resource.data.to is timestamp
@@ -120,27 +120,28 @@ service cloud.firestore {
         && str(request.resource.data.name, 1, 40)
         && request.resource.data.createdAt == request.time
         // usta mavjud, bahosi shu batch'da yangilangan
-        && getAfter(doc('electricians/' + request.resource.data.electricianId)).data.ratingCount
-           == get(doc('electricians/' + request.resource.data.electricianId)).data.ratingCount + 1
+        && getAfter(/databases/$(database)/documents/electricians/$(request.resource.data.electricianId)).data.ratingCount
+           == get(/databases/$(database)/documents/electricians/$(request.resource.data.electricianId)).data.ratingCount + 1
         // spamga qarshi: 5 daqiqada bitta sharh
-        && getAfter(doc('meta/' + request.auth.uid)).data.lastReviewAt == request.time
-        && (!exists(doc('meta/' + request.auth.uid))
-            || !('lastReviewAt' in get(doc('meta/' + request.auth.uid)).data)
-            || get(doc('meta/' + request.auth.uid)).data.lastReviewAt < request.time - duration.value(5, 'm'));
+        && getAfter(/databases/$(database)/documents/meta/$(request.auth.uid)).data.lastReviewAt == request.time
+        && (!exists(/databases/$(database)/documents/meta/$(request.auth.uid))
+            || !('lastReviewAt' in get(/databases/$(database)/documents/meta/$(request.auth.uid)).data)
+            || get(/databases/$(database)/documents/meta/$(request.auth.uid)).data.lastReviewAt < request.time - duration.value(5, 'm'));
       allow update, delete: if isAdmin();
     }
 
     // Ish rasmlari: har bir rasm alohida hujjat (siqilgan data-URL, ≈100–280 KB)
+    // Katta matnni regex bilan to'liq skanerlamaymiz — faqat boshlanishini tekshiramiz (sayt rasmni <img> ichida, escape bilan ko'rsatadi)
     function imageData(v, maxLen) {
-      return v is string && v.size() <= maxLen && v.matches('^data:image/(webp|jpeg);base64,[A-Za-z0-9+/=]+$');
+      return v is string && v.size() <= maxLen && v.split(',')[0] in ['data:image/webp;base64', 'data:image/jpeg;base64'];
     }
     match /photos/{id} {
       allow read: if true;
       allow create: if hasPhone()
         && request.resource.data.keys().hasOnly(['uid', 'data', 'createdAt'])
         && request.resource.data.uid == request.auth.uid
-        && exists(doc('electricians/' + request.auth.uid))
-        && get(doc('electricians/' + request.auth.uid)).data.status != 'blocked'
+        && exists(/databases/$(database)/documents/electricians/$(request.auth.uid))
+        && get(/databases/$(database)/documents/electricians/$(request.auth.uid)).data.status != 'blocked'
         && imageData(request.resource.data.data, 400000)
         && request.resource.data.createdAt == request.time;
       allow delete: if isAdmin() || (signedIn() && resource.data.uid == request.auth.uid);
@@ -166,10 +167,10 @@ service cloud.firestore {
         && request.resource.data.uid == request.auth.uid
         && request.resource.data.status == 'open'
         && request.resource.data.createdAt == request.time
-        && getAfter(doc('meta/' + request.auth.uid)).data.lastReportAt == request.time
-        && (!exists(doc('meta/' + request.auth.uid))
-            || !('lastReportAt' in get(doc('meta/' + request.auth.uid)).data)
-            || get(doc('meta/' + request.auth.uid)).data.lastReportAt < request.time - duration.value(2, 'm'));
+        && getAfter(/databases/$(database)/documents/meta/$(request.auth.uid)).data.lastReportAt == request.time
+        && (!exists(/databases/$(database)/documents/meta/$(request.auth.uid))
+            || !('lastReportAt' in get(/databases/$(database)/documents/meta/$(request.auth.uid)).data)
+            || get(/databases/$(database)/documents/meta/$(request.auth.uid)).data.lastReportAt < request.time - duration.value(2, 'm'));
       allow read, update, delete: if isAdmin();
     }
 

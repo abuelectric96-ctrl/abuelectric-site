@@ -3,7 +3,8 @@
 
 // Telefon kamerasidagi 4–8 MB rasm → bir necha o'n KB WebP (WebP ishlamasa JPEG)
 export async function compressImage(file, maxSide = 1024, quality = 0.72) {
-  if (!file.type.startsWith('image/')) throw Object.assign(new Error('not-image'), { code: 'media/not-image' });
+  // iPhone (HEIC) va ba'zi ilova ichidagi brauzerlarda file.type bo'sh keladi — shunday fayllarni ham ochib ko'ramiz
+  if (file.type && !file.type.startsWith('image/')) throw Object.assign(new Error('not-image'), { code: 'media/not-image' });
   const bmp = await loadBitmap(file);
   const scale = Math.min(1, maxSide / Math.max(bmp.width, bmp.height));
   const w = Math.round(bmp.width * scale), h = Math.round(bmp.height * scale);

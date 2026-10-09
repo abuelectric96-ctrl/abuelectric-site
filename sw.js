@@ -1,8 +1,8 @@
 // AbuElectric service worker.
 // Sahifalar: avval tarmoqdan (yangi ma'lumot), internet yo'q bo'lsa — keshdan.
-// CSS/JS/rasmlar: avval keshdan (tez ochilishi uchun), fonda yangilanadi.
+// CSS/JS: avval tarmoqdan. Rasmlar: avval keshdan, fonda yangilanadi.
 // Firebase so'rovlariga tegmaydi.
-const VERSION = 'ae-v4';
+const VERSION = 'ae-v5';
 const CORE = ['/', '/qidiruv/', '/assets/css/app.css?v=3', '/assets/js/ui.js', '/assets/js/api.js', '/assets/js/data.js',
   '/assets/js/firebase.js', '/assets/js/pages/home.js?v=1', '/assets/js/pages/search.js?v=1', '/assets/js/pages/profile.js?v=1', '/usta/', '/assets/img/app-192.png'];
 
@@ -31,6 +31,18 @@ self.addEventListener('fetch', (e) => {
     return;
   }
 
+  // Kod (JS/CSS): avval tarmoqdan — yangi versiya darhol ishlasin; internet yo'q bo'lsa keshdan
+  if (url.pathname.startsWith('/assets/js/') || url.pathname.startsWith('/assets/css/')) {
+    e.respondWith(
+      fetch(req).then((res) => {
+        if (res.ok) { const copy = res.clone(); caches.open(VERSION).then((c) => c.put(req, copy)); }
+        return res;
+      }).catch(() => caches.match(req))
+    );
+    return;
+  }
+
+  // Rasmlar: avval keshdan
   if (url.pathname.startsWith('/assets/')) {
     e.respondWith(
       caches.match(req).then((cached) => {
