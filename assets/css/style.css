@@ -482,3 +482,23 @@ p { margin: 0; }
 .finder-join { color: var(--volt); font-weight: 700; text-decoration: none; text-align: center; font-size: 15px; }
 .finder-join:hover { text-decoration: underline; }
 @media (max-width: 860px) { .finder { grid-template-columns: 1fr; padding: 26px 18px; } }
+.finder { grid-template-columns: 1fr 300px; padding-bottom: 0; overflow: hidden; align-items: end; }
+.finder-main { display: grid; grid-template-columns: 1.1fr .9fr; gap: 28px; align-items: center; padding-bottom: 36px; }
+.finder-photo { margin: 0; position: relative; align-self: end; }
+.finder-photo img { width: 100%; height: auto; filter: drop-shadow(0 20px 30px rgba(0, 0, 0, .45)); }
+.finder-photo figcaption {
+  position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%); white-space: nowrap;
+  background: rgba(255, 255, 255, .95); color: var(--green-900); border-radius: 14px; padding: 8px 14px;
+  box-shadow: 0 10px 24px -8px rgba(0, 0, 0, .5); text-align: center; font-size: 13px; line-height: 1.3;
+}
+.finder-photo figcaption b { display: block; font-size: 15px; }
+.finder-photo figcaption span { color: #5b6862; font-weight: 600; }
+@media (max-width: 1020px) {
+  .finder { grid-template-columns: 1fr 220px; }
+  .finder-main { grid-template-columns: 1fr; gap: 20px; }
+}
+@media (max-width: 680px) {
+  .finder { grid-template-columns: 1fr; }
+  .finder-main { padding-bottom: 8px; }
+  .finder-photo { width: 220px; margin: 0 auto; }
+}
