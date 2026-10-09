@@ -1,4 +1,4 @@
-// /kirish/ — telefon raqam + SMS kod, so'ng (agar profil bo'lmasa) elektrik profilini to'ldirish.
+// /kirish/ — Telegram orqali raqamni tasdiqlash, so'ng (agar profil bo'lmasa) elektrik profilini to'ldirish.
 // ?next=... bilan kelgan mijoz (sharh yozish uchun) faqat telefonni tasdiqlaydi va qaytariladi.
 import { auth, firestore } from '../firebase.js';
 import { initPage, esc, fmtPhone, friendlyError, storedRef } from '../ui.js';
@@ -14,130 +14,94 @@ const nextRaw = params.get('next');
 const isCustomer = Boolean(nextRaw); // sharh/shikoyat uchun kelgan
 const next = safeNext(nextRaw);
 
-const MOBILE = /^(20|33|50|55|77|88|90|91|93|94|95|97|98|99)\d{7}$/;
-const SMS_KEY = 'ae_sms_log';
+// Telegram orqali kirish serveri (Abu-Ustoz backend ichidagi alohida /ae modul)
+const AE_API = 'https://abu-ustoz-backend.onrender.com/ae';
+const POLL_MS = 2000;
 
-// Spamga qarshi: 15 daqiqada 3 tadan ko'p SMS yubormaymiz (Firebase'ning o'z cheklovlari ham bor)
-function smsAllowed() {
-  try {
-    const log = JSON.parse(localStorage.getItem(SMS_KEY) || '[]').filter((t) => Date.now() - t < 15 * 60e3);
-    return log.length < 3 ? { ok: true, log } : { ok: false, wait: Math.ceil((15 * 60e3 - (Date.now() - log[0])) / 60e3) };
-  } catch { return { ok: true, log: [] }; }
-}
-function logSms(log) { try { localStorage.setItem(SMS_KEY, JSON.stringify([...log, Date.now()])); } catch {} }
-
-function authError(err) {
-  const c = err?.code || '';
-  const map = {
-    'auth/invalid-phone-number': "Telefon raqam noto'g'ri. Masalan: 90 123 45 67",
-    'auth/too-many-requests': "Juda ko'p urinish bo'ldi. 15–30 daqiqadan keyin qayta urinib ko'ring.",
-    'auth/quota-exceeded': "Bugun SMS yuborish chegarasi tugadi. Ertaga urinib ko'ring.",
-    'auth/invalid-verification-code': "Kod noto'g'ri. SMS'dagi 6 xonali kodni tekshiring.",
-    'auth/code-expired': "Kodning muddati o'tdi. Yangi kod so'rang.",
-    'auth/operation-not-allowed': "SMS orqali kirish hali yoqilmagan. Birozdan keyin urinib ko'ring.",
-    'auth/billing-not-enabled': "SMS xizmati vaqtincha ishlamayapti. Birozdan keyin urinib ko'ring.",
-    'auth/captcha-check-failed': "Xavfsizlik tekshiruvi o'tmadi. Sahifani yangilab, qayta urinib ko'ring.",
-    'auth/network-request-failed': "Internet aloqasi yo'q. Ulanishni tekshiring.",
-  };
-  return map[c] || friendlyError(err);
+// Telefon raqami: Telegram custom token'dagi 'tel' (yoki eski SMS kirishdagi phoneNumber)
+export async function userPhone(user) {
+  if (user.phoneNumber) return user.phoneNumber;
+  try { return (await user.getIdTokenResult()).claims.tel || ''; } catch { return ''; }
 }
 
-// ---------- 1. Telefon raqam ----------
-function phoneStep() {
+const TG_ICON = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M21.4 4.1 18.3 19c-.2 1-.9 1.3-1.8.8l-4.7-3.5-2.3 2.2c-.3.3-.5.5-1 .5l.3-4.8 8.7-7.9c.4-.3-.1-.5-.6-.2L6.2 12.9l-4.6-1.4c-1-.3-1-1 .2-1.5l18-6.9c.8-.3 1.6.2 1.6 1Z"/></svg>';
+
+// ---------- 1–2. Telegram orqali raqamni tasdiqlash ----------
+function telegramStep() {
   root.innerHTML = `
   <div class="auth-card">
     <h1>${isCustomer ? 'Telefon raqamni tasdiqlang' : "Elektrik sifatida ro'yxatdan o'tish"}</h1>
-    <p class="muted">${isCustomer ? "Sharh va shikoyatlar faqat tasdiqlangan raqamdan qabul qilinadi. Bu spamdan himoya qiladi." : "Bepul. Telefon raqamingizga SMS kod keladi. Avval ro'yxatdan o'tgan bo'lsangiz, shu yerdan kabinetga kirasiz."}</p>
-    <form id="phoneForm" novalidate>
-      <div class="field"><label for="phone">Telefon raqam</label>
-        <div class="phone-input"><span>+998</span><input id="phone" inputmode="numeric" autocomplete="tel-national" placeholder="90 123 45 67" maxlength="12"></div>
-      </div>
-      <p class="form-error" role="alert" hidden></p>
-      <button class="btn btn-volt btn-block" type="submit">SMS kod olish</button>
-    </form>
-    <div id="recaptcha"></div>
+    <p class="muted">${isCustomer ? "Sharh va shikoyatlar faqat tasdiqlangan raqamdan qabul qilinadi. Bu spamdan himoya qiladi." : "Bepul. Raqamingiz Telegram orqali tasdiqlanadi. Avval ro'yxatdan o'tgan bo'lsangiz, shu yerdan kabinetga kirasiz."}</p>
+    <ol class="tg-steps">
+      <li>Pastdagi tugmani bosing — Telegram ochiladi</li>
+      <li>Botda <b>START</b>, keyin <b>«📱 Raqamni yuborish»</b> ni bosing</li>
+      <li>Shu sahifaga qayting — kirish o'zi davom etadi</li>
+    </ol>
+    <a class="btn btn-tg btn-block btn-tg-login" id="tgBtn" aria-disabled="true">${TG_ICON} Tayyorlanmoqda…</a>
+    <div class="tg-wait" id="tgWait" hidden><span class="spin"></span>Telegram'dan tasdiq kutilmoqda…</div>
+    <p class="form-error" role="alert" hidden></p>
+    <p class="muted center small">Telegram yo'qmi? <a href="https://telegram.org/apps" target="_blank" rel="noopener">O'rnatish</a> · Yordam: <a href="https://t.me/abuelectricuz_ooo" target="_blank" rel="noopener">@abuelectricuz_ooo</a></p>
   </div>`;
-  const form = document.getElementById('phoneForm');
-  const input = document.getElementById('phone');
-  input.addEventListener('input', () => {
-    const d = input.value.replace(/\D/g, '').slice(0, 9);
-    input.value = [d.slice(0, 2), d.slice(2, 5), d.slice(5, 7), d.slice(7, 9)].filter(Boolean).join(' ');
-  });
-  input.focus();
+  const card = root.querySelector('.auth-card');
+  const btn = document.getElementById('tgBtn');
+  const wait = document.getElementById('tgWait');
+  let code = '', timer = null, deadline = 0, busy = false;
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const digits = input.value.replace(/\D/g, '');
-    if (!MOBILE.test(digits)) return showError(form, "Mobil raqamni to'liq yozing. Masalan: 90 123 45 67");
-    const lim = smsAllowed();
-    if (!lim.ok) return showError(form, `SMS ko'p so'raldi. ${lim.wait} daqiqadan keyin qayta urinib ko'ring.`);
-    const btn = form.querySelector('button');
-    btn.disabled = true; btn.textContent = 'Yuborilmoqda…';
-    showError(form, '');
+  const fail = (msg) => { showError(card, msg); wait.hidden = true; stop(); };
+  const stop = () => { clearInterval(timer); timer = null; };
+
+  async function prepare() {
+    btn.setAttribute('aria-disabled', 'true');
+    btn.removeAttribute('href');
+    btn.innerHTML = `${TG_ICON} Tayyorlanmoqda…`;
     try {
-      const a = await auth();
-      if (!window.__recaptcha) window.__recaptcha = new a.RecaptchaVerifier(a.auth, 'recaptcha', { size: 'invisible' });
-      const confirmation = await a.signInWithPhoneNumber(a.auth, '+998' + digits, window.__recaptcha);
-      logSms(lim.log);
-      codeStep('+998' + digits, confirmation);
+      const r = await fetch(AE_API + '/login/start', { method: 'POST' });
+      if (r.status === 503) return fail("Telegram orqali kirish hozircha sozlanmoqda. Birozdan keyin urinib ko'ring.");
+      if (r.status === 429) return fail("Juda ko'p urinish bo'ldi. 10 daqiqadan keyin qayta urinib ko'ring.");
+      const d = await r.json();
+      if (!d.code || !d.bot) throw new Error('bad');
+      code = d.code;
+      deadline = Date.now() + (d.expiresIn || 600) * 1000;
+      btn.href = `https://t.me/${d.bot}?start=${code}`;
+      btn.target = '_blank';
+      btn.rel = 'noopener';
+      btn.removeAttribute('aria-disabled');
+      btn.innerHTML = `${TG_ICON} Telegram orqali kirish`;
+      showError(card, '');
     } catch (err) {
       console.error(err);
-      showError(form, authError(err));
-      btn.disabled = false; btn.textContent = 'SMS kod olish';
-      try { window.__recaptcha?.clear(); } catch {}
-      window.__recaptcha = null;
-      document.getElementById('recaptcha').innerHTML = '';
+      fail("Server bilan bog'lanib bo'lmadi. Internetni tekshirib, sahifani yangilang.");
     }
-  });
-}
+  }
 
-// ---------- 2. SMS kod ----------
-function codeStep(phone, confirmation) {
-  root.innerHTML = `
-  <div class="auth-card">
-    <h1>SMS kodni kiriting</h1>
-    <p class="muted"><b>${esc(fmtPhone(phone))}</b> raqamiga 6 xonali kod yuborildi.</p>
-    <form id="codeForm" novalidate>
-      <div class="field"><label for="code">Kod</label>
-        <input id="code" class="code-input" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="• • • • • •"></div>
-      <p class="form-error" role="alert" hidden></p>
-      <button class="btn btn-volt btn-block" type="submit">Tasdiqlash</button>
-    </form>
-    <p class="muted center"><button class="linkbtn" id="resend" disabled>Qayta yuborish (60)</button> · <button class="linkbtn" id="change">Raqamni o'zgartirish</button></p>
-  </div>`;
-  const form = document.getElementById('codeForm');
-  const code = document.getElementById('code');
-  code.focus();
-  code.addEventListener('input', () => {
-    code.value = code.value.replace(/\D/g, '').slice(0, 6);
-    if (code.value.length === 6) form.requestSubmit();
-  });
-
-  let left = 60;
-  const resend = document.getElementById('resend');
-  const timer = setInterval(() => {
-    left -= 1;
-    resend.textContent = left > 0 ? `Qayta yuborish (${left})` : 'Qayta yuborish';
-    if (left <= 0) { resend.disabled = false; clearInterval(timer); }
-  }, 1000);
-  resend.addEventListener('click', () => { clearInterval(timer); phoneStep(); document.getElementById('phone').value = phone.slice(4).replace(/(\d{2})(\d{3})(\d{2})(\d{2})/, '$1 $2 $3 $4'); });
-  document.getElementById('change').addEventListener('click', () => { clearInterval(timer); phoneStep(); });
-
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    if (!/^\d{6}$/.test(code.value)) return showError(form, '6 xonali kodni kiriting.');
-    const btn = form.querySelector('button');
-    btn.disabled = true; btn.textContent = 'Tekshirilmoqda…';
+  async function poll() {
+    if (busy || !code) return;
+    if (Date.now() > deadline) { stop(); wait.hidden = true; return prepare(); }
+    busy = true;
     try {
-      const res = await confirmation.confirm(code.value);
-      clearInterval(timer);
-      await afterLogin(res.user);
+      const d = await (await fetch(`${AE_API}/login/poll?code=${code}`, { cache: 'no-store' })).json();
+      if (d.status === 'done' && d.token) {
+        stop();
+        wait.innerHTML = '<span class="spin"></span>Kirilmoqda…';
+        const a = await auth();
+        const res = await a.signInWithCustomToken(a.auth, d.token);
+        await afterLogin(res.user);
+      } else if (d.status === 'expired') {
+        stop(); wait.hidden = true; prepare();
+      }
     } catch (err) {
       console.error(err);
-      showError(form, authError(err));
-      btn.disabled = false; btn.textContent = 'Tasdiqlash';
-    }
+    } finally { busy = false; }
+  }
+
+  btn.addEventListener('click', (e) => {
+    if (btn.getAttribute('aria-disabled')) { e.preventDefault(); return; }
+    wait.hidden = false;
+    if (!timer) timer = setInterval(poll, POLL_MS);
   });
+  // Telegram'dan qaytganda darhol tekshiramiz
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && timer) poll(); });
+  prepare();
 }
 
 // ---------- 3. Kirgandan keyin ----------
@@ -153,11 +117,12 @@ async function afterLogin(user) {
   }
 }
 
-function profileStep(user) {
+async function profileStep(user) {
+  const phone = await userPhone(user);
   root.innerHTML = `
   <div class="auth-card wide">
     <h1>Profilingizni to'ldiring</h1>
-    <p class="muted">Raqamingiz tasdiqlandi: <b>${esc(fmtPhone(user.phoneNumber))}</b>. Endi mijozlar ko'radigan ma'lumotlarni yozing.</p>
+    <p class="muted">Raqamingiz tasdiqlandi: <b>${esc(fmtPhone(phone))}</b>. Endi mijozlar ko'radigan ma'lumotlarni yozing.</p>
     <form id="profileForm" class="pform" novalidate>
       ${profileFormHTML({}, { withConsent: true })}
       <button class="btn btn-volt btn-block" type="submit">Ro'yxatdan o'tish</button>
@@ -187,7 +152,7 @@ function profileStep(user) {
         ...data,
         photoURL,
         works: [],
-        phone: user.phoneNumber,
+        phone,
         status: 'pending',
         availableUntil: null,
         ratingSum: 0, ratingCount: 0, ratingAvg: 0,
@@ -207,4 +172,4 @@ function profileStep(user) {
 }
 
 // Avval kirgan bo'lsa — to'g'ridan-to'g'ri davom etamiz
-currentUser().then((u) => (u ? afterLogin(u) : phoneStep())).catch(() => phoneStep());
+currentUser().then((u) => (u ? afterLogin(u) : telegramStep())).catch(() => telegramStep());

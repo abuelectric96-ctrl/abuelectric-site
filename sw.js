@@ -2,8 +2,8 @@
 // Sahifalar: avval tarmoqdan (yangi ma'lumot), internet yo'q bo'lsa — keshdan.
 // CSS/JS: avval tarmoqdan. Rasmlar: avval keshdan, fonda yangilanadi.
 // Firebase so'rovlariga tegmaydi.
-const VERSION = 'ae-v7';
-const CORE = ['/', '/elektriklar/', '/qidiruv/', '/assets/css/app.css?v=4', '/assets/js/ui.js', '/assets/js/api.js', '/assets/js/data.js',
+const VERSION = 'ae-v8';
+const CORE = ['/', '/elektriklar/', '/qidiruv/', '/assets/css/app.css?v=5', '/assets/js/ui.js', '/assets/js/api.js', '/assets/js/data.js',
   '/assets/js/firebase.js', '/assets/js/pages/home.js?v=1', '/assets/js/pages/search.js?v=1', '/assets/js/pages/profile.js?v=1', '/usta/', '/assets/img/app-192.png'];
 
 self.addEventListener('install', (e) => {

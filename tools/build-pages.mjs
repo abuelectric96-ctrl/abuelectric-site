@@ -33,7 +33,7 @@ function page({ path, title, description, h1, intro, bodyAttr = '', extra = '' }
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap">
-<link rel="stylesheet" href="/assets/css/app.css?v=4">
+<link rel="stylesheet" href="/assets/css/app.css?v=5">
 </head>
 <body${bodyAttr}>
 <header class="top">
@@ -120,7 +120,7 @@ function appPage({ path, title, description, mainId, script, noindex = false }) 
     .replace('<meta name="theme-color"', `${noindex ? '<meta name="robots" content="noindex">\n' : ''}<meta name="theme-color"`);
 }
 write('kirish/index.html', appPage({
-  path: '/kirish/', mainId: 'auth', script: '/assets/js/pages/login.js?v=1',
+  path: '/kirish/', mainId: 'auth', script: '/assets/js/pages/login.js?v=2',
   title: "Elektriklar uchun bepul ro'yxatdan o'tish — AbuElectric",
   description: "Elektrikmisiz? Bepul profil oching: mijozlar viloyat va tuman bo'yicha sizni topib, to'g'ridan-to'g'ri qo'ng'iroq qiladi.",
 }));

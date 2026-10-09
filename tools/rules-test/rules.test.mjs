@@ -105,6 +105,14 @@ await t("o'zini admin qilish — rad", () => assertFails(setDoc(doc(begona, 'adm
 await t("oddiy odam profilni o'chirishi — rad", () => assertFails(deleteDoc(doc(begona, 'electricians', 'usta1'))));
 await t("admin profilni o'chiradi — ruxsat", () => assertSucceeds(deleteDoc(doc(admin, 'electricians', 'usta1'))));
 
+console.log('\nTelegram orqali kirgan foydalanuvchi');
+const tgUsta = env.authenticatedContext('p998905556677', { tel: '+998905556677' }).firestore();
+const tgSoxta = env.authenticatedContext('p998905556688', { tel: '+79001234567' }).firestore();
+await t("Telegram raqami bilan profil — ruxsat", () => assertSucceeds(setDoc(doc(tgUsta, 'electricians', 'p998905556677'), profile({ phone: '+998905556677' }))));
+await t("Telegram: boshqa raqam yozish — rad", () => assertFails(setDoc(doc(tgUsta, 'electricians', 'p998905556677'), profile({ phone: '+998901112233' }))));
+await t("Telegram: chet el raqami — rad", () => assertFails(setDoc(doc(tgSoxta, 'electricians', 'p998905556688'), profile({ phone: '+79001234567' }))));
+await t("Telegram: ish rasmi — ruxsat", () => assertSucceeds(addDoc(collection(tgUsta, 'photos'), { uid: 'p998905556677', data: img(5000), createdAt: serverTimestamp() })));
+
 console.log(`\n${pass} ta o'tdi, ${fail} ta xato\n`);
 await env.cleanup();
 process.exit(fail ? 1 : 0);

@@ -389,3 +389,13 @@ code, .uid { font-family: ui-monospace, Consolas, monospace; background: var(--b
   .hero-usta { margin: 0 -10px -86px 0; }
   .hero-usta figcaption { display: none; }
 }
+
+/* ---------- Telegram orqali kirish ---------- */
+.tg-steps { margin: 0; padding: 0 0 0 22px; display: grid; gap: 8px; font-weight: 600; }
+.tg-steps li::marker { color: #229ed9; font-weight: 800; }
+.btn-tg-login { min-height: 58px; font-size: 18px; text-decoration: none; }
+.btn-tg-login[aria-disabled="true"] { opacity: .6; pointer-events: none; }
+.tg-wait { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 12px; border-radius: 12px; background: var(--blue-soft); color: var(--blue); font-weight: 700; }
+.spin { width: 18px; height: 18px; border-radius: 50%; border: 3px solid currentColor; border-right-color: transparent; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.tg-wait[hidden] { display: none; }
