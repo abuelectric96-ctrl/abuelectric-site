@@ -360,3 +360,32 @@ details[open] summary { margin-bottom: 14px; }
 code, .uid { font-family: ui-monospace, Consolas, monospace; background: var(--bg); padding: 2px 6px; border-radius: 6px; font-size: 14px; }
 .uid { display: block; padding: 10px; word-break: break-all; user-select: all; }
 .cab-links { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* ---------- Katalog hero: usta rasmi ---------- */
+.hero { overflow: hidden; }
+.hero-grid { display: grid; grid-template-columns: 1fr 340px; gap: 24px; align-items: end; position: relative; }
+.hero-text { padding-bottom: 8px; }
+.hero-points { list-style: none; margin: 18px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.hero-points li { font-size: 14px; font-weight: 800; padding: 6px 12px; border-radius: 99px; background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .12); color: rgba(255, 255, 255, .88); }
+.hero-points li:nth-child(2) { color: #5fe0a0; }
+.hero-points li:nth-child(3) { color: var(--volt); }
+.hero-usta { margin: -10px 0 -96px; position: relative; align-self: end; }
+.hero-usta img { width: 100%; height: auto; display: block; filter: drop-shadow(0 24px 40px rgba(0, 0, 0, .55)); }
+.hero-usta::before { content: ""; position: absolute; inset: 18% 6% 10%; z-index: -1; border-radius: 50%; background: radial-gradient(circle, rgba(255, 194, 26, .28), transparent 65%); }
+.hero-usta figcaption {
+  position: absolute; left: -36px; top: 42%; display: flex; gap: 10px; align-items: center;
+  background: #fff; color: var(--ink); border-radius: 16px; padding: 10px 14px 10px 10px;
+  box-shadow: 0 18px 36px -14px rgba(0, 0, 0, .55); font-size: 13px; line-height: 1.25; font-weight: 600;
+}
+.hero-usta figcaption i { width: 36px; height: 36px; border-radius: 11px; background: var(--volt); display: grid; place-items: center; font-style: normal; font-size: 18px; }
+.hero-usta figcaption b { display: block; font-size: 15px; }
+@media (max-width: 860px) { .hero-grid { grid-template-columns: 1fr 230px; } .hero-usta figcaption { left: -20px; } }
+@media (max-width: 600px) {
+  .hero { padding-bottom: 86px; }
+  .hero-grid { grid-template-columns: 1fr 128px; gap: 4px; }
+  .hero h1 { font-size: 29px; }
+  .hero p { font-size: 15.5px; }
+  .hero-points { display: none; }
+  .hero-usta { margin: 0 -10px -86px 0; }
+  .hero-usta figcaption { display: none; }
+}
