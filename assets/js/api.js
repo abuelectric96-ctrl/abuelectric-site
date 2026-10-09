@@ -1,8 +1,17 @@
-// Ma'lumot qatlami: qidiruv, top ustalar, bitta profil.
-// Firebase sozlanmagan bo'lsa, namunaviy (demo) ma'lumot qaytaradi — dizaynni sinash uchun.
+// Ma'lumot qatlami: qidiruv, top ustalar, bitta profil, sharhlar.
+// Firebase sozlanmagan bo'lsa yoki manzilda ?demo=1 bo'lsa — namunaviy ma'lumot (dizaynni sinash uchun).
+// ?demo=0 namuna rejimini o'chiradi.
 import { firestore, isConfigured } from './firebase.js';
 
-export const DEMO = !isConfigured;
+function demoFlag() {
+  try {
+    const p = new URLSearchParams(location.search).get('demo');
+    if (p === '1') sessionStorage.setItem('ae_demo', '1');
+    if (p === '0') sessionStorage.removeItem('ae_demo');
+    return sessionStorage.getItem('ae_demo') === '1';
+  } catch { return false; }
+}
+export const DEMO = !isConfigured || demoFlag();
 
 const DAY = 864e5;
 const toMs = (v) => (v == null ? 0 : typeof v === 'number' ? v : v.toMillis ? v.toMillis() : new Date(v).getTime());
@@ -80,17 +89,38 @@ export async function topRated(n = 6) {
 }
 
 export async function getElectrician(id) {
-  if (DEMO) return demoData.find((e) => e.id === id) ? decorate(demoData.find((e) => e.id === id)) : null;
+  if (DEMO) {
+    await new Promise((r) => setTimeout(r, 350));
+    const e = demoData.find((x) => x.id === id);
+    return e ? decorate(e) : null;
+  }
   const { db, doc, getDoc } = await firestore();
   const s = await getDoc(doc(db, 'electricians', id));
   if (!s.exists() || s.data().status === 'blocked') return null;
   return decorate({ id: s.id, ...s.data() });
 }
 
+// Ustaning kelgusi "Vaqtincha boraman" safarlari
+export async function getTrips(uid) {
+  const now = Date.now();
+  if (DEMO) return (demoData.find((e) => e.id === uid)?.trips || []).filter((t) => toMs(t.to) >= now);
+  const { db, collection, query, where, getDocs } = await firestore();
+  const snap = await getDocs(query(collection(db, 'trips'), where('uid', '==', uid)));
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() })).filter((t) => toMs(t.to) >= now - DAY / 2)
+    .sort((a, b) => toMs(a.from) - toMs(b.from));
+}
+
+export async function getReviews(electricianId, n = 30) {
+  if (DEMO) return demoReviews.filter((r) => r.electricianId === electricianId);
+  const { db, collection, query, where, getDocs, limit } = await firestore();
+  const snap = await getDocs(query(collection(db, 'reviews'), where('electricianId', '==', electricianId), limit(n)));
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a, b) => toMs(b.createdAt) - toMs(a.createdAt));
+}
+
 // ---------- Namunaviy ma'lumot (faqat Firebase ulanmaganda) ----------
 const soon = (days) => Date.now() + days * DAY;
 const demoData = [
-  { id: 'demo1', name: 'Bahodir Karimov', viloyat: 'toshkent-shahri', tuman: 'Chilonzor tumani', phone: '+998900000001', telegram: 'abuelectricuz_ooo', services: ['rozetka', 'avtomat', 'sim', 'avariya'], experience: 12, price: 'Chaqiruv 50 000 so\'mdan', status: 'verified', availableUntil: soon(0.5), ratingSum: 96, ratingCount: 20 },
+  { id: 'demo1', name: 'Bahodir Karimov', viloyat: 'toshkent-shahri', tuman: 'Chilonzor tumani', phone: '+998900000001', telegram: 'abuelectricuz_ooo', services: ['rozetka', 'avtomat', 'sim', 'avariya'], experience: 12, price: 'Chaqiruv 50 000 so\'mdan', about: "Kvartira va hovli uylarni to'liq simlash, shchit yig'ish, avariya chaqiruvlari. Ishga kafolat beraman, o'z asbob-uskunalarim bilan boraman.", status: 'verified', availableUntil: soon(0.5), ratingSum: 96, ratingCount: 20 },
   { id: 'demo2', name: 'Sardor Rahimov', viloyat: 'toshkent-shahri', tuman: 'Yunusobod tumani', phone: '+998900000002', telegram: '', services: ['yoritish', 'rozetka', 'kamera'], experience: 6, status: 'verified', availableUntil: null, ratingSum: 44, ratingCount: 10 },
   { id: 'demo3', name: 'Jasur Tursunov', viloyat: 'toshkent-shahri', tuman: 'Sergeli tumani', phone: '+998900000003', telegram: '', services: ['texnika', 'rozetka'], experience: 3, status: 'pending', availableUntil: soon(0.2), ratingSum: 0, ratingCount: 0 },
   { id: 'demo4', name: 'Ulug\'bek Saidov', viloyat: 'qoraqalpogiston', tuman: 'Amudaryo tumani', phone: '+998900000004', telegram: 'abuelectricuz_ooo', services: ['sim', 'avtomat', 'yoritish', 'avariya'], experience: 9, price: 'Kelishilgan holda', status: 'verified', availableUntil: null, ratingSum: 47, ratingCount: 10,
@@ -99,4 +129,11 @@ const demoData = [
   { id: 'demo6', name: 'Rustam Aliyev', viloyat: 'fargona', tuman: "Qo'qon shahri", phone: '+998900000006', telegram: '', services: ['avtomat', 'sim'], experience: 15, status: 'verified', availableUntil: null, ratingSum: 58, ratingCount: 12 },
   { id: 'demo7', name: 'Doston Ergashev', viloyat: 'andijon', tuman: 'Asaka tumani', phone: '+998900000007', telegram: '', services: ['rozetka', 'yoritish'], experience: 2, status: 'pending', availableUntil: null, ratingSum: 0, ratingCount: 0 },
   { id: 'demo8', name: 'Shoxrux Nazarov', viloyat: 'buxoro', tuman: 'Buxoro shahri', phone: '+998900000008', telegram: '', services: ['avariya', 'avtomat', 'texnika'], experience: 8, status: 'verified', availableUntil: soon(0.3), ratingSum: 39, ratingCount: 8 },
+];
+
+const demoReviews = [
+  { electricianId: 'demo1', name: 'Dilshod', rating: 5, text: "Kechasi avtomat yonib ketdi, 40 daqiqada kelib tuzatib berdi. Rahmat!", createdAt: soon(-3) },
+  { electricianId: 'demo1', name: 'Malika', rating: 5, text: "Butun kvartirani qayta simladi, toza va tez ishladi.", createdAt: soon(-12) },
+  { electricianId: 'demo1', name: 'Anvar', rating: 4, text: "Yaxshi usta, faqat biroz kechikib keldi.", createdAt: soon(-30) },
+  { electricianId: 'demo4', name: 'Jamshid', rating: 5, text: "Amudaryodan kelgan usta, Toshkentda hovlimizni to'liq simlab berdi.", createdAt: soon(-5) },
 ];

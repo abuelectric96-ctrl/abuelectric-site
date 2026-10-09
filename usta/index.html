@@ -3,18 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Elektrik qidirish — O'zbekiston bo'ylab ustalar | AbuElectric</title>
-<meta name="description" content="Viloyat, tuman va xizmat turi bo'yicha elektrik toping. Hozir bo'sh ustalar va vaqtincha shahringizga kelayotgan elektriklar.">
+<title>Elektrik profili — AbuElectric</title>
+<meta name="description" content="Elektrik ustaning profili: xizmatlar, tajriba, ish rasmlari va mijozlar sharhlari. To'g'ridan-to'g'ri qo'ng'iroq qiling.">
 <meta name="theme-color" content="#0b1526">
-<link rel="canonical" href="https://abuelectric.uz/qidiruv/">
+<link rel="canonical" href="https://abuelectric.uz/usta/">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="icon" href="/assets/img/app-192.png" type="image/png">
 <link rel="apple-touch-icon" href="/assets/img/app-180.png">
-<meta property="og:type" content="website">
+<meta property="og:type" content="profile">
 <meta property="og:site_name" content="AbuElectric">
-<meta property="og:title" content="Elektrik qidirish — O'zbekiston bo'ylab ustalar | AbuElectric">
-<meta property="og:description" content="Viloyat, tuman va xizmat turi bo'yicha elektrik toping. Hozir bo'sh ustalar va vaqtincha shahringizga kelayotgan elektriklar.">
-<meta property="og:url" content="https://abuelectric.uz/qidiruv/">
+<meta property="og:title" content="Elektrik profili — AbuElectric">
+<meta property="og:description" content="O'zbekiston bo'ylab elektriklar katalogi.">
 <meta property="og:image" content="https://abuelectric.uz/assets/img/og-katalog.png">
 <meta property="og:locale" content="uz_UZ">
 <meta name="twitter:card" content="summary_large_image">
@@ -23,7 +22,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap">
 <link rel="stylesheet" href="/assets/css/app.css?v=2">
 </head>
-<body>
+<body class="has-actionbar">
 <header class="top">
   <div class="wrap">
     <a class="logo" href="/" aria-label="AbuElectric bosh sahifa"><i><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M13.2 2.5 4.8 13.2c-.4.5 0 1.3.6 1.3H11l-1.2 7c-.1.7.8 1.1 1.3.5l8.4-10.7c.4-.5 0-1.3-.6-1.3H13l1.2-7c.1-.7-.8-1.1-1.3-.5Z"/></svg></i><b>Abu<span>Electric</span></b></a>
@@ -35,24 +34,11 @@
     </nav>
   </div>
 </header>
-<main class="wrap">
-  <form class="search-card search-compact" id="searchForm" role="search">
-    <div class="search-grid">
-      <div class="field"><label for="v">Viloyat</label><select id="v" name="v"></select></div>
-      <div class="field"><label for="t">Tuman</label><select id="t" name="t"></select></div>
-      <div class="field"><label for="x">Xizmat turi</label><select id="x" name="x"></select></div>
-      <button class="btn btn-volt" type="submit">🔍 Qidirish</button>
-    </div>
-    <label class="toggle"><input type="checkbox" name="bosh"><span class="sw"></span>Faqat hozir bo'sh ustalar</label>
-  </form>
-  <div class="results-head">
-    <h1 id="title">Elektriklar</h1>
-    <span class="muted" id="count"></span>
-  </div>
-  
-  <div class="list" id="results" aria-live="polite"></div>
-  
-</main>
+
+<main class="wrap" id="profile" aria-live="polite"></main>
+
+<dialog class="lightbox" id="lightbox"><button class="lb-close" aria-label="Yopish">✕</button><img alt=""></dialog>
+
 <footer class="foot">
   <div class="wrap">
     <span>© 2026 AbuElectric · ABUELECTRIC MCHJ</span>
@@ -63,6 +49,6 @@
     </nav>
   </div>
 </footer>
-<script type="module" src="/assets/js/pages/search.js?v=1"></script>
+<script type="module" src="/assets/js/pages/profile.js?v=1"></script>
 </body>
 </html>

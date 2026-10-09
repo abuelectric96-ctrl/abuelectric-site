@@ -2,9 +2,9 @@
 // Sahifalar: avval tarmoqdan (yangi ma'lumot), internet yo'q bo'lsa — keshdan.
 // CSS/JS/rasmlar: avval keshdan (tez ochilishi uchun), fonda yangilanadi.
 // Firebase so'rovlariga tegmaydi.
-const VERSION = 'ae-v1';
-const CORE = ['/', '/qidiruv/', '/assets/css/app.css?v=1', '/assets/js/ui.js', '/assets/js/api.js', '/assets/js/data.js',
-  '/assets/js/firebase.js', '/assets/js/pages/home.js?v=1', '/assets/js/pages/search.js?v=1', '/assets/img/app-192.png'];
+const VERSION = 'ae-v2';
+const CORE = ['/', '/qidiruv/', '/assets/css/app.css?v=2', '/assets/js/ui.js', '/assets/js/api.js', '/assets/js/data.js',
+  '/assets/js/firebase.js', '/assets/js/pages/home.js?v=1', '/assets/js/pages/search.js?v=1', '/assets/js/pages/profile.js?v=1', '/usta/', '/assets/img/app-192.png'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(VERSION).then((c) => c.addAll(CORE)).then(() => self.skipWaiting()));
