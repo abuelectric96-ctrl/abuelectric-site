@@ -1,12 +1,12 @@
 // Firebase ulanishi. Konsoldagi "Project settings → Your apps → Web app" dan olingan qiymatlarni shu yerga qo'ying.
 // Bu kalitlar maxfiy emas: himoya Firestore qoidalari (firestore.rules) orqali bo'ladi.
 export const firebaseConfig = {
-  apiKey: '',
-  authDomain: '',
-  projectId: '',
-  storageBucket: '',
-  messagingSenderId: '',
-  appId: '',
+  apiKey: 'AIzaSyCZ5EL3T11s8FNeHrDxGzaIaDL6XM660nY',
+  authDomain: 'abuelectric-536b3.firebaseapp.com',
+  projectId: 'abuelectric-536b3',
+  storageBucket: 'abuelectric-536b3.firebasestorage.app',
+  messagingSenderId: '130960807328',
+  appId: '1:130960807328:web:5819eb402c4d1a2d0cc0c5',
 };
 
 export const isConfigured = Boolean(firebaseConfig.apiKey && firebaseConfig.projectId);

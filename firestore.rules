@@ -1,0 +1,163 @@
+rules_version = '2';
+
+// AbuElectric — Firestore xavfsizlik qoidalari.
+// Asosiy tamoyillar:
+//  - Elektrik faqat o'z profilini (hujjat ID = uning uid'i) yaratadi va tahrirlaydi.
+//  - status (tasdiqlash/bloklash) va baholarni elektrikning o'zi o'zgartira olmaydi.
+//  - Admin (admins/{uid} hujjati bor foydalanuvchi) hammasini boshqaradi.
+//  - Sharh: telefon bilan kirgan har kim, bitta ustaga bitta sharh, o'ziga emas, 5 daqiqada bittadan ko'p emas.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function phone() { return request.auth.token.phone_number; }
+    function hasPhone() { return signedIn() && phone() is string && phone().matches('^\\+998[0-9]{9}$'); }
+    function isAdmin() { return signedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid)); }
+    function doc(path) { return /databases/$(database)/documents/$(path); }
+
+    function validRegion(v) {
+      return v in ['qoraqalpogiston', 'andijon', 'buxoro', 'fargona', 'jizzax', 'xorazm', 'namangan', 'navoiy',
+                   'qashqadaryo', 'samarqand', 'sirdaryo', 'surxondaryo', 'toshkent-viloyati', 'toshkent-shahri'];
+    }
+    function str(v, min, max) { return v is string && v.size() >= min && v.size() <= max; }
+
+    // Profil maydonlarini tekshirish (yaratish va tahrirlashda)
+    function validProfile(d) {
+      return d.keys().hasOnly(['name', 'phone', 'telegram', 'photoURL', 'viloyat', 'tuman', 'services', 'experience',
+                               'price', 'about', 'works', 'status', 'availableUntil', 'ratingSum', 'ratingCount',
+                               'ratingAvg', 'ref', 'consent', 'consentAt', 'createdAt', 'updatedAt', 'verifiedAt'])
+        && str(d.name, 2, 60)
+        && validRegion(d.viloyat)
+        && str(d.tuman, 2, 60)
+        && d.services is list && d.services.size() >= 1 && d.services.size() <= 8
+        && d.services.hasOnly(['rozetka', 'avtomat', 'sim', 'yoritish', 'kamera', 'texnika', 'avariya', 'boshqa'])
+        && d.experience is int && d.experience >= 0 && d.experience <= 60
+        && (!('telegram' in d) || (d.telegram is string && d.telegram.matches('^[A-Za-z0-9_]{0,32}$')))
+        && (!('price' in d) || str(d.price, 0, 80))
+        && (!('about' in d) || str(d.about, 0, 600))
+        && (!('photoURL' in d) || str(d.photoURL, 0, 600))
+        && (!('works' in d) || (d.works is list && d.works.size() <= 8))
+        && (!('availableUntil' in d) || d.availableUntil == null
+            || (d.availableUntil is timestamp && d.availableUntil <= request.time + duration.value(25, 'h')))
+        && d.updatedAt == request.time;
+    }
+
+    // Elektrik o'zgartira olmaydigan maydonlar
+    function lockedUnchanged() {
+      return !request.resource.data.diff(resource.data).affectedKeys()
+        .hasAny(['phone', 'status', 'ratingSum', 'ratingCount', 'ratingAvg', 'ref', 'consent', 'consentAt', 'createdAt', 'verifiedAt']);
+    }
+
+    // Sharh qo'shilganda shu batch ichida ustaning bahosini yangilash
+    function ratingUpdate(uid) {
+      let rid = uid + '_' + request.auth.uid;
+      let r = getAfter(doc('reviews/' + rid)).data;
+      let d = request.resource.data;
+      return hasPhone() && request.auth.uid != uid
+        && !exists(doc('reviews/' + rid)) && existsAfter(doc('reviews/' + rid))
+        && d.diff(resource.data).affectedKeys().hasOnly(['ratingSum', 'ratingCount', 'ratingAvg'])
+        && d.ratingCount == resource.data.ratingCount + 1
+        && d.ratingSum == resource.data.ratingSum + r.rating
+        && d.ratingAvg >= 1 && d.ratingAvg <= 5;
+    }
+
+    match /electricians/{uid} {
+      allow get: if resource == null || resource.data.status != 'blocked' || isAdmin() || (signedIn() && request.auth.uid == uid);
+      // Ro'yxat so'rovlari status bo'yicha cheklangan bo'lishi shart (bloklanganlar ko'rinmaydi)
+      allow list: if resource.data.status in ['verified', 'pending'] || isAdmin();
+
+      allow create: if hasPhone() && request.auth.uid == uid
+        && validProfile(request.resource.data)
+        && request.resource.data.phone == phone()
+        && request.resource.data.status == 'pending'
+        && request.resource.data.consent == true
+        && request.resource.data.consentAt == request.time
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.ratingSum == 0 && request.resource.data.ratingCount == 0 && request.resource.data.ratingAvg == 0
+        && (!('ref' in request.resource.data) || request.resource.data.ref.matches('^[a-z0-9_-]{0,32}$'));
+
+      allow update: if isAdmin()
+        || (signedIn() && request.auth.uid == uid && resource.data.status != 'blocked'
+            && lockedUnchanged() && validProfile(request.resource.data))
+        || ratingUpdate(uid);
+
+      allow delete: if isAdmin();
+    }
+
+    // "Vaqtincha boraman"
+    match /trips/{id} {
+      allow read: if true;
+      allow create: if hasPhone()
+        && request.resource.data.keys().hasOnly(['uid', 'viloyat', 'tuman', 'from', 'to', 'createdAt'])
+        && request.resource.data.uid == request.auth.uid
+        && exists(doc('electricians/' + request.auth.uid))
+        && validRegion(request.resource.data.viloyat)
+        && str(request.resource.data.tuman, 0, 60)
+        && request.resource.data.from is timestamp && request.resource.data.to is timestamp
+        && request.resource.data.to > request.time
+        && request.resource.data.to >= request.resource.data.from
+        && request.resource.data.to <= request.resource.data.from + duration.value(62, 'd')
+        && request.resource.data.createdAt == request.time;
+      allow delete: if isAdmin() || (signedIn() && resource.data.uid == request.auth.uid);
+      allow update: if isAdmin();
+    }
+
+    // Sharhlar: ID = {elektrikId}_{mijozUid} → bitta odam bitta ustaga bitta sharh
+    match /reviews/{rid} {
+      allow read: if true;
+      allow create: if hasPhone()
+        && rid == request.resource.data.electricianId + '_' + request.auth.uid
+        && request.resource.data.keys().hasOnly(['electricianId', 'uid', 'name', 'rating', 'text', 'createdAt'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.electricianId != request.auth.uid
+        && request.resource.data.rating is int && request.resource.data.rating >= 1 && request.resource.data.rating <= 5
+        && str(request.resource.data.text, 0, 500)
+        && str(request.resource.data.name, 1, 40)
+        && request.resource.data.createdAt == request.time
+        // usta mavjud, bahosi shu batch'da yangilangan
+        && getAfter(doc('electricians/' + request.resource.data.electricianId)).data.ratingCount
+           == get(doc('electricians/' + request.resource.data.electricianId)).data.ratingCount + 1
+        // spamga qarshi: 5 daqiqada bitta sharh
+        && getAfter(doc('meta/' + request.auth.uid)).data.lastReviewAt == request.time
+        && (!exists(doc('meta/' + request.auth.uid))
+            || !('lastReviewAt' in get(doc('meta/' + request.auth.uid)).data)
+            || get(doc('meta/' + request.auth.uid)).data.lastReviewAt < request.time - duration.value(5, 'm'));
+      allow update, delete: if isAdmin();
+    }
+
+    // Shikoyatlar
+    match /reports/{id} {
+      allow create: if hasPhone()
+        && request.resource.data.keys().hasOnly(['type', 'targetId', 'reason', 'uid', 'status', 'createdAt'])
+        && request.resource.data.type in ['profile', 'review']
+        && str(request.resource.data.targetId, 1, 200)
+        && str(request.resource.data.reason, 3, 300)
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.status == 'open'
+        && request.resource.data.createdAt == request.time
+        && getAfter(doc('meta/' + request.auth.uid)).data.lastReportAt == request.time
+        && (!exists(doc('meta/' + request.auth.uid))
+            || !('lastReportAt' in get(doc('meta/' + request.auth.uid)).data)
+            || get(doc('meta/' + request.auth.uid)).data.lastReportAt < request.time - duration.value(2, 'm'));
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Spam cheklovlari uchun vaqt belgilari (faqat server vaqti yoziladi)
+    match /meta/{uid} {
+      allow read: if signedIn() && request.auth.uid == uid;
+      allow create, update: if signedIn() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['lastReviewAt', 'lastReportAt'])
+        && (!('lastReviewAt' in request.resource.data) || request.resource.data.lastReviewAt == request.time
+            || (resource != null && request.resource.data.lastReviewAt == resource.data.lastReviewAt))
+        && (!('lastReportAt' in request.resource.data) || request.resource.data.lastReportAt == request.time
+            || (resource != null && request.resource.data.lastReportAt == resource.data.lastReportAt));
+    }
+
+    // Adminlar ro'yxati — faqat Firebase konsolidan qo'lda qo'shiladi
+    match /admins/{uid} {
+      allow get: if signedIn() && request.auth.uid == uid;
+      allow list: if isAdmin();
+      allow write: if false;
+    }
+  }
+}

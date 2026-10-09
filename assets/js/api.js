@@ -48,13 +48,10 @@ export async function searchElectricians({ viloyat = '', tuman = '', service = '
       const tripSnap = await getDocs(query(collection(db, 'trips'), where('viloyat', '==', viloyat), where('to', '>=', new Date(now - DAY / 2)), limit(100)));
       const trips = tripSnap.docs.map((d) => d.data()).filter((t) => !list.some((e) => e.id === t.uid));
       const ids = [...new Set(trips.map((t) => t.uid))];
-      for (let i = 0; i < ids.length; i += 30) {
-        const s = await getDocs(query(collection(db, 'electricians'), where(documentId(), 'in', ids.slice(i, i + 30))));
-        s.docs.forEach((d) => {
-          const e = { id: d.id, ...d.data() };
-          if (e.status === 'blocked') return;
-          list.push({ ...e, trip: trips.find((t) => t.uid === d.id) });
-        });
+      for (let i = 0; i < ids.length; i += 15) { // 2 ta "in" × 15 = 30 (Firestore chegarasi)
+        const s = await getDocs(query(collection(db, 'electricians'),
+          where('status', 'in', ['verified', 'pending']), where(documentId(), 'in', ids.slice(i, i + 15))));
+        s.docs.forEach((d) => list.push({ id: d.id, ...d.data(), trip: trips.find((t) => t.uid === d.id) }));
       }
     }
   }
