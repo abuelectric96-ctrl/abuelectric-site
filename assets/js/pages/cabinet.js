@@ -4,7 +4,7 @@ import { REGIONS, regionBySlug } from '../data.js';
 import { initPage, esc, fmtPhone, fmtRange, friendlyError, fillDistricts } from '../ui.js';
 import { currentUser, getMyProfile, signOut } from '../session.js';
 import { profileFormHTML, bindProfileForm, readProfileForm, showError } from '../profile-form.js';
-import { compressImage, uploadImage, deleteByUrl } from '../media.js';
+import { compressForDb, blobToDataURL } from '../media.js';
 
 initPage();
 
@@ -14,7 +14,7 @@ const ms = (v) => (v == null ? 0 : typeof v === 'number' ? v : v.toMillis ? v.to
 const H24 = 24 * 3600e3;
 const MAX_WORKS = 8;
 
-let fs, user, me, trips = [];
+let fs, user, me, trips = [], photos = [];
 
 function toast(msg, bad = false) {
   const t = document.createElement('div');
@@ -77,11 +77,11 @@ function render() {
   </section>
 
   <section class="pf-card">
-    <div class="pf-card-head"><h2>Ish rasmlari</h2><span class="muted">${(me.works || []).length}/${MAX_WORKS}</span></div>
+    <div class="pf-card-head"><h2>Ish rasmlari</h2><span class="muted">${photos.length}/${MAX_WORKS}</span></div>
     <p class="muted">Bajargan ishlaringiz rasmi mijozlar ishonchini oshiradi.</p>
     <div class="works" id="works">
-      ${(me.works || []).map((u, i) => `<div class="work"><img src="${esc(u)}" alt="Ish rasmi ${i + 1}" loading="lazy"><button class="work-del" data-del-work="${i}" aria-label="O'chirish">✕</button></div>`).join('')}
-      ${(me.works || []).length < MAX_WORKS ? `<label class="work work-add"><input type="file" accept="image/*" multiple hidden id="workInput"><span>＋<br>Rasm qo'shish</span></label>` : ''}
+      ${photos.map((ph, i) => `<div class="work"><img src="${esc(ph.data)}" alt="Ish rasmi ${i + 1}" loading="lazy"><button class="work-del" data-del-work="${esc(ph.id)}" aria-label="O'chirish">✕</button></div>`).join('')}
+      ${photos.length < MAX_WORKS ? `<label class="work work-add"><input type="file" accept="image/*" multiple hidden id="workInput"><span>＋<br>Rasm qo'shish</span></label>` : ''}
     </div>
   </section>
 
@@ -158,23 +158,23 @@ function bind() {
 
   // Ish rasmlari
   document.getElementById('workInput')?.addEventListener('change', async (e) => {
-    const files = [...e.target.files].slice(0, MAX_WORKS - (me.works || []).length);
+    const files = [...e.target.files].slice(0, MAX_WORKS - photos.length);
     if (!files.length) return;
     toast(`${files.length} ta rasm yuklanmoqda…`);
-    const added = [];
+    let added = 0;
     for (const f of files) {
-      try { added.push((await uploadImage(`electricians/${user.uid}/work-${Date.now()}-${added.length}`, await compressImage(f))).url); }
-      catch (err) { console.error(err); }
+      try {
+        const data = await blobToDataURL(await compressForDb(f));
+        await fs.addDoc(fs.collection(fs.db, 'photos'), { uid: user.uid, data, createdAt: fs.serverTimestamp() });
+        added += 1;
+      } catch (err) { console.error(err); }
     }
-    if (!added.length) return toast("Rasmlarni yuklab bo'lmadi. Internetni tekshirib, qayta urinib ko'ring.", true);
-    try { await save({ works: [...(me.works || []), ...added] }); toast(`${added.length} ta rasm qo'shildi`); render(); }
-    catch (err) { toast(friendlyError(err), true); }
+    if (!added) return toast("Rasmlarni yuklab bo'lmadi. Internetni tekshirib, qayta urinib ko'ring.", true);
+    await loadPhotos(); toast(`${added} ta rasm qo'shildi`); render();
   });
   document.querySelectorAll('[data-del-work]').forEach((b) => b.addEventListener('click', async () => {
     if (!confirm("Bu rasmni o'chirasizmi?")) return;
-    const i = Number(b.dataset.delWork);
-    const url = me.works[i];
-    try { await save({ works: me.works.filter((_, j) => j !== i) }); deleteByUrl(url); render(); }
+    try { await fs.deleteDoc(fs.doc(fs.db, 'photos', b.dataset.delWork)); await loadPhotos(); render(); }
     catch (err) { toast(friendlyError(err), true); }
   }));
 
@@ -184,8 +184,9 @@ function bind() {
     if (!f) return;
     toast('Hujjat yuklanmoqda…');
     try {
-      const { path } = await uploadImage(`verification/${user.uid}/doc-${Date.now()}`, await compressImage(f, 1600, 0.82));
-      await save({ verifyDocPath: path });
+      const data = await blobToDataURL(await compressForDb(f, 560000));
+      await fs.setDoc(fs.doc(fs.db, 'verifications', user.uid), { data, createdAt: fs.serverTimestamp() });
+      await save({ verifyDocPath: 'verifications/' + user.uid });
       toast('Hujjat yuklandi. Admin ko\'rib chiqadi.');
       render();
     } catch (err) { console.error(err); toast("Hujjatni yuklab bo'lmadi. Qayta urinib ko'ring.", true); }
@@ -203,9 +204,7 @@ function bind() {
     btn.disabled = true; btn.textContent = 'Saqlanmoqda…';
     try {
       if (ctl.getPhoto()) {
-        const old = me.photoURL;
-        data.photoURL = (await uploadImage(`electricians/${user.uid}/avatar-${Date.now()}`, ctl.getPhoto())).url;
-        if (old) deleteByUrl(old);
+        data.photoURL = await blobToDataURL(ctl.getPhoto());
       }
       await save(data);
       toast('Saqlandi ✓');
@@ -216,6 +215,11 @@ function bind() {
       btn.disabled = false; btn.textContent = 'Saqlash';
     }
   });
+}
+
+async function loadPhotos() {
+  const snap = await fs.getDocs(fs.query(fs.collection(fs.db, 'photos'), fs.where('uid', '==', user.uid)));
+  photos = snap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a, b) => ms(a.createdAt) - ms(b.createdAt));
 }
 
 async function loadTrips() {
@@ -231,7 +235,7 @@ async function start() {
   try {
     me = await getMyProfile(user.uid);
     if (!me) { location.replace('/kirish/'); return; }
-    await loadTrips().catch(() => { trips = []; });
+    await Promise.all([loadTrips().catch(() => { trips = []; }), loadPhotos().catch(() => { photos = []; })]);
     render();
   } catch (err) {
     console.error(err);

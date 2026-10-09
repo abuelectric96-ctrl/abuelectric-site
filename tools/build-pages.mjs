@@ -131,7 +131,7 @@ write('kabinet/index.html', appPage({
 write('admin/index.html', appPage({
   path: '/admin/', mainId: 'admin', script: '/assets/js/pages/admin.js?v=1', noindex: true,
   title: 'Admin — AbuElectric', description: 'Admin panel.',
-}));
+}).replace('</main>', '</main>\n<dialog class="lightbox" id="docView" onclick="this.close()"><img alt="Tasdiqlash hujjati"></dialog>'));
 
 // sitemap.xml (ustalar profillari keyingi bosqichda qo'shiladi)
 const urls = ['/', '/qidiruv/', '/kirish/', '/biz-haqimizda/', '/privacy-policy.html', ...REGIONS.map((r) => `/viloyat/${r.slug}/`)];

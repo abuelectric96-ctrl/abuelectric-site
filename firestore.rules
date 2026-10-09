@@ -36,9 +36,12 @@ service cloud.firestore {
         && (!('telegram' in d) || (d.telegram is string && d.telegram.matches('^[A-Za-z0-9_]{0,32}$')))
         && (!('price' in d) || str(d.price, 0, 80))
         && (!('about' in d) || str(d.about, 0, 600))
-        && (!('photoURL' in d) || str(d.photoURL, 0, 600))
+        // profil rasmi: kichik data-URL (≈6 KB) yoki https havola
+        && (!('photoURL' in d) || d.photoURL == ''
+            || (d.photoURL is string && d.photoURL.size() <= 24000
+                && d.photoURL.matches('^(https://[^ ]+|data:image/(webp|jpeg);base64,[A-Za-z0-9+/=]+)$')))
         && (!('works' in d) || (d.works is list && d.works.size() <= 8))
-        && (!('verifyDocPath' in d) || (d.verifyDocPath is string && d.verifyDocPath.matches('^verification/[A-Za-z0-9]+/[A-Za-z0-9._-]+$')))
+        && (!('verifyDocPath' in d) || (d.verifyDocPath is string && d.verifyDocPath.matches('^verifications/[A-Za-z0-9]+$')))
         && (!('availableUntil' in d) || d.availableUntil == null
             || (d.availableUntil is timestamp && d.availableUntil <= request.time + duration.value(25, 'h')))
         && d.updatedAt == request.time;
@@ -125,6 +128,32 @@ service cloud.firestore {
             || !('lastReviewAt' in get(doc('meta/' + request.auth.uid)).data)
             || get(doc('meta/' + request.auth.uid)).data.lastReviewAt < request.time - duration.value(5, 'm'));
       allow update, delete: if isAdmin();
+    }
+
+    // Ish rasmlari: har bir rasm alohida hujjat (siqilgan data-URL, ≈100–280 KB)
+    function imageData(v, maxLen) {
+      return v is string && v.size() <= maxLen && v.matches('^data:image/(webp|jpeg);base64,[A-Za-z0-9+/=]+$');
+    }
+    match /photos/{id} {
+      allow read: if true;
+      allow create: if hasPhone()
+        && request.resource.data.keys().hasOnly(['uid', 'data', 'createdAt'])
+        && request.resource.data.uid == request.auth.uid
+        && exists(doc('electricians/' + request.auth.uid))
+        && get(doc('electricians/' + request.auth.uid)).data.status != 'blocked'
+        && imageData(request.resource.data.data, 400000)
+        && request.resource.data.createdAt == request.time;
+      allow delete: if isAdmin() || (signedIn() && resource.data.uid == request.auth.uid);
+    }
+
+    // Tasdiqlash hujjati: faqat egasi va admin ko'radi
+    match /verifications/{uid} {
+      allow read: if isAdmin() || (signedIn() && request.auth.uid == uid);
+      allow create, update: if hasPhone() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['data', 'createdAt'])
+        && imageData(request.resource.data.data, 760000)
+        && request.resource.data.createdAt == request.time;
+      allow delete: if isAdmin() || (signedIn() && request.auth.uid == uid);
     }
 
     // Shikoyatlar

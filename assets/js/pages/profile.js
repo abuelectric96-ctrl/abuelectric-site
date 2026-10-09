@@ -1,5 +1,5 @@
 import { regionBySlug, serviceByKey } from '../data.js';
-import { getElectrician, getReviews, getTrips, DEMO } from '../api.js';
+import { getElectrician, getReviews, getTrips, getPhotos, DEMO } from '../api.js';
 import { firestore } from '../firebase.js';
 import { initPage, esc, fmtPhone, fmtRange, errorHTML, friendlyError } from '../ui.js';
 
@@ -32,19 +32,19 @@ function setMeta(e, region) {
   set('link[rel="canonical"]', 'href', url);
   set('meta[property="og:title"]', 'content', title);
   set('meta[property="og:description"]', 'content', desc);
-  if (e.photoURL) set('meta[property="og:image"]', 'content', e.photoURL);
+  if (/^https:/.test(e.photoURL || '')) set('meta[property="og:image"]', 'content', e.photoURL);
   const ld = document.createElement('script');
   ld.type = 'application/ld+json';
   ld.textContent = JSON.stringify({
     '@context': 'https://schema.org', '@type': 'Electrician', name: e.name, url, telephone: e.phone,
-    image: e.photoURL || undefined,
+    image: /^https:/.test(e.photoURL || '') ? e.photoURL : undefined,
     areaServed: where || undefined,
     aggregateRating: e.ratingCount ? { '@type': 'AggregateRating', ratingValue: e.rating.toFixed(1), reviewCount: e.ratingCount } : undefined,
   });
   document.head.appendChild(ld);
 }
 
-function render(e, trips, reviews) {
+function render(e, trips, reviews, photos) {
   const region = regionBySlug(e.viloyat);
   const tg = String(e.telegram || '').replace(/^@/, '');
   const back = document.referrer.includes('/qidiruv/') || document.referrer.includes('/viloyat/') ? 'javascript:history.back()' : '/qidiruv/?v=' + e.viloyat;
@@ -88,8 +88,8 @@ function render(e, trips, reviews) {
         ${trips.map((t) => `<li><b>${esc(regionBySlug(t.viloyat)?.name || t.viloyat)}${t.tuman ? ', ' + esc(t.tuman) : ''}</b><span>${fmtRange(t.from, t.to)}</span></li>`).join('')}
       </ul></section>` : ''}
 
-      ${(e.works || []).length ? `<section class="pf-card"><h2>Ish rasmlari</h2><div class="works">
-        ${e.works.map((u, i) => `<button class="work" data-src="${esc(u)}" aria-label="${i + 1}-rasmni kattalashtirish"><img src="${esc(u)}" alt="Ish rasmi ${i + 1}" loading="lazy"></button>`).join('')}
+      ${photos.length ? `<section class="pf-card"><h2>Ish rasmlari</h2><div class="works">
+        ${photos.map((ph, i) => `<button class="work" data-src="${esc(ph.data)}" aria-label="${i + 1}-rasmni kattalashtirish"><img src="${esc(ph.data)}" alt="Ish rasmi ${i + 1}" loading="lazy"></button>`).join('')}
       </div></section>` : ''}
     </div>
 
@@ -248,9 +248,9 @@ async function load() {
       root.innerHTML = `<div class="state"><b>Bu usta topilmadi</b><p>Profil o'chirilgan yoki havola noto'g'ri bo'lishi mumkin.</p><a class="btn btn-volt" href="/qidiruv/">Boshqa ustalarni ko'rish</a></div>`;
       return;
     }
-    const [trips, reviews] = await Promise.all([getTrips(id).catch(() => []), getReviews(id).catch(() => [])]);
+    const [trips, reviews, photos] = await Promise.all([getTrips(id).catch(() => []), getReviews(id).catch(() => []), getPhotos(id).catch(() => [])]);
     setMeta(e, regionBySlug(e.viloyat));
-    render(e, trips, reviews);
+    render(e, trips, reviews, photos);
   } catch (err) {
     console.error(err);
     root.innerHTML = errorHTML(err);

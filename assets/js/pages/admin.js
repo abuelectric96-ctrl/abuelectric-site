@@ -1,5 +1,5 @@
 // /admin/ — faqat admins/{uid} hujjati bor foydalanuvchi uchun.
-import { firestore, storage } from '../firebase.js';
+import { firestore } from '../firebase.js';
 import { REGIONS, regionBySlug } from '../data.js';
 import { initPage, esc, fmtPhone, friendlyError } from '../ui.js';
 import { currentUser, isAdmin, signOut } from '../session.js';
@@ -79,7 +79,7 @@ function listPane() {
         <div class="muted small">Ro'yxatdan: ${e.createdAt ? day(ms(e.createdAt)) : '—'}${e.ref ? ` · ref: <b>${esc(e.ref)}</b>` : ''} · ish rasmi: ${(e.works || []).length} · baho: ${e.ratingCount ? (e.ratingSum / e.ratingCount).toFixed(1) + ' (' + e.ratingCount + ')' : '—'}</div>
       </div>
       <div class="arow-act">
-        ${e.verifyDocPath ? `<button class="btn btn-line btn-sm" data-doc="${esc(e.verifyDocPath)}">📄 Hujjat</button>` : ''}
+        ${e.verifyDocPath ? `<button class="btn btn-line btn-sm" data-doc="${esc(e.id)}">📄 Hujjat</button>` : ''}
         ${e.status !== 'verified' && e.status !== 'blocked' ? `<button class="btn btn-call btn-sm" data-act="verify" data-id="${e.id}">✔ Tasdiqlash</button>` : ''}
         ${e.status === 'verified' ? `<button class="btn btn-line btn-sm" data-act="unverify" data-id="${e.id}">Tasdiqni olish</button>` : ''}
         ${e.status !== 'blocked' ? `<button class="btn btn-line btn-sm" data-act="block" data-id="${e.id}">⛔ Bloklash</button>` : `<button class="btn btn-line btn-sm" data-act="unblock" data-id="${e.id}">Blokdan chiqarish</button>`}
@@ -96,10 +96,14 @@ async function act(kind, id) {
   if (kind === 'block') { if (!confirm(`${e.name} bloklansinmi? Qidiruvda ko'rinmay qoladi.`)) return; await fs.updateDoc(ref, { status: 'blocked', availableUntil: null }); }
   if (kind === 'unblock') await fs.updateDoc(ref, { status: 'pending' });
   if (kind === 'delete') {
-    if (!confirm(`${e.name} profilini BUTUNLAY o'chirasizmi? Safarlari ham o'chadi. Buni qaytarib bo'lmaydi.`)) return;
-    const trips = await fs.getDocs(fs.query(fs.collection(fs.db, 'trips'), fs.where('uid', '==', id)));
+    if (!confirm(`${e.name} profilini BUTUNLAY o'chirasizmi? Safarlari va rasmlari ham o'chadi. Buni qaytarib bo'lmaydi.`)) return;
+    const [trips, photos] = await Promise.all([
+      fs.getDocs(fs.query(fs.collection(fs.db, 'trips'), fs.where('uid', '==', id))),
+      fs.getDocs(fs.query(fs.collection(fs.db, 'photos'), fs.where('uid', '==', id))),
+    ]);
     const batch = fs.writeBatch(fs.db);
-    trips.docs.forEach((d) => batch.delete(d.ref));
+    [...trips.docs, ...photos.docs].forEach((d) => batch.delete(d.ref));
+    batch.delete(fs.doc(fs.db, 'verifications', id));
     batch.delete(ref);
     await batch.commit();
     all = all.filter((x) => x.id !== id);
@@ -211,8 +215,11 @@ function bindPane(pane) {
   }));
   pane.querySelectorAll('[data-doc]').forEach((b) => b.addEventListener('click', async () => {
     try {
-      const st = await storage();
-      window.open(await st.getDownloadURL(st.ref(st.storage, b.dataset.doc)), '_blank', 'noopener');
+      const s = await fs.getDoc(fs.doc(fs.db, 'verifications', b.dataset.doc));
+      if (!s.exists()) return toast('Hujjat topilmadi', true);
+      const d = document.getElementById('docView');
+      d.querySelector('img').src = s.data().data;
+      d.showModal();
     } catch (err) { console.error(err); toast("Hujjatni ochib bo'lmadi", true); }
   }));
 }

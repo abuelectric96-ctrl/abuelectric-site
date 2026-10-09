@@ -4,7 +4,7 @@ import { auth, firestore } from '../firebase.js';
 import { initPage, esc, fmtPhone, friendlyError, storedRef } from '../ui.js';
 import { currentUser, getMyProfile, safeNext } from '../session.js';
 import { profileFormHTML, bindProfileForm, readProfileForm, showError } from '../profile-form.js';
-import { uploadImage } from '../media.js';
+import { blobToDataURL } from '../media.js';
 
 initPage();
 
@@ -177,7 +177,7 @@ function profileStep(user) {
     let photoURL = '';
     let photoFailed = false;
     if (ctl.getPhoto()) {
-      try { photoURL = (await uploadImage(`electricians/${user.uid}/avatar-${Date.now()}`, ctl.getPhoto())).url; }
+      try { photoURL = await blobToDataURL(ctl.getPhoto()); }
       catch (err) { console.error(err); photoFailed = true; }
     }
 

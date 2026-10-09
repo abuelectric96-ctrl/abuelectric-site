@@ -110,6 +110,14 @@ export async function getTrips(uid) {
     .sort((a, b) => toMs(a.from) - toMs(b.from));
 }
 
+// Ish rasmlari (photos kolleksiyasi, har biri data-URL)
+export async function getPhotos(uid) {
+  if (DEMO) return [];
+  const { db, collection, query, where, getDocs, limit } = await firestore();
+  const snap = await getDocs(query(collection(db, 'photos'), where('uid', '==', uid), limit(8)));
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a, b) => toMs(a.createdAt) - toMs(b.createdAt));
+}
+
 export async function getReviews(electricianId, n = 30) {
   if (DEMO) return demoReviews.filter((r) => r.electricianId === electricianId);
   const { db, collection, query, where, getDocs, limit } = await firestore();

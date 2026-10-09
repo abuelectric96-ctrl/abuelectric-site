@@ -1,7 +1,7 @@
 // Profil formasi: ro'yxatdan o'tish va kabinetda bir xil ishlatiladi.
 import { REGIONS, SERVICES, regionBySlug } from './data.js';
 import { esc, fillDistricts } from './ui.js';
-import { compressImage } from './media.js';
+import { compressAvatar } from './media.js';
 
 export function profileFormHTML(p = {}, { withConsent = false } = {}) {
   const regionOpts = REGIONS.map((r) => `<option value="${r.slug}"${r.slug === p.viloyat ? ' selected' : ''}>${esc(r.name)}</option>`).join('');
@@ -40,7 +40,7 @@ export function bindProfileForm(form, p = {}) {
     const file = form.elements.photo.files[0];
     if (!file) return;
     try {
-      photoBlob = await compressImage(file, 512, 0.8);
+      photoBlob = await compressAvatar(file);
       document.getElementById('avatarPreview').innerHTML = `<img src="${URL.createObjectURL(photoBlob)}" alt="">`;
     } catch { showError(form, "Bu faylni rasm sifatida o'qib bo'lmadi. Boshqa rasm tanlang."); }
   });
