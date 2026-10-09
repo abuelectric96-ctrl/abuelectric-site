@@ -2,7 +2,7 @@
 import { firestore } from '../firebase.js';
 import { REGIONS, regionBySlug } from '../data.js';
 import { initPage, esc, fmtPhone, fmtRange, friendlyError, fillDistricts } from '../ui.js';
-import { currentUser, getMyProfile, signOut } from '../session.js';
+import { currentUser, getMyProfile, signOut, isAdmin } from '../session.js';
 import { profileFormHTML, bindProfileForm, readProfileForm, showError } from '../profile-form.js';
 import { compressForDb, blobToDataURL } from '../media.js';
 
@@ -14,7 +14,7 @@ const ms = (v) => (v == null ? 0 : typeof v === 'number' ? v : v.toMillis ? v.to
 const H24 = 24 * 3600e3;
 const MAX_WORKS = 8;
 
-let fs, user, me, trips = [], photos = [];
+let fs, user, me, trips = [], photos = [], admin = false;
 
 function toast(msg, bad = false) {
   const t = document.createElement('div');
@@ -52,7 +52,7 @@ function render() {
   root.innerHTML = `
   <div class="cab-head">
     <div><h1>Salom, ${esc(me.name.split(' ')[0])}!</h1><p class="muted">${esc(fmtPhone(me.phone))} · ${esc([me.tuman, region?.short].filter(Boolean).join(', '))}</p></div>
-    <a class="btn btn-line btn-sm" href="/usta/?id=${encodeURIComponent(user.uid)}">Profilimni ko'rish ›</a>
+    <div class="cab-links">${admin ? '<a class="btn btn-dark btn-sm" href="/admin/">🛠 Admin panel</a>' : ''}<a class="btn btn-line btn-sm" href="/usta/?id=${encodeURIComponent(user.uid)}">Profilimni ko'rish ›</a></div>
   </div>
   ${params.get('yangi') ? `<div class="notice ok">🎉 <b>Ro'yxatdan o'tdingiz!</b> Profilingiz saytda paydo bo'ldi.${params.get('rasm') === '0' ? ' Rasm yuklanmadi, uni pastdagi "Profilni tahrirlash" orqali qayta qo\'shing.' : ''}</div>` : ''}
   ${statusBox()}
@@ -243,7 +243,7 @@ async function start() {
   try {
     me = await getMyProfile(user.uid);
     if (!me) { location.replace('/kirish/'); return; }
-    await Promise.all([loadTrips().catch(() => { trips = []; }), loadPhotos().catch(() => { photos = []; })]);
+    await Promise.all([loadTrips().catch(() => { trips = []; }), loadPhotos().catch(() => { photos = []; }), isAdmin(user.uid).then((v) => { admin = v; })]);
     render();
   } catch (err) {
     console.error(err);

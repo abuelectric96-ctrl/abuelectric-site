@@ -359,3 +359,4 @@ details[open] summary { margin-bottom: 14px; }
 .reftable th, .reftable td { text-align: left; padding: 8px; border-bottom: 1px solid var(--border); }
 code, .uid { font-family: ui-monospace, Consolas, monospace; background: var(--bg); padding: 2px 6px; border-radius: 6px; font-size: 14px; }
 .uid { display: block; padding: 10px; word-break: break-all; user-select: all; }
+.cab-links { display: flex; flex-wrap: wrap; gap: 8px; }
