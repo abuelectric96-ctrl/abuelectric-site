@@ -25,7 +25,8 @@ service cloud.firestore {
     function validProfile(d) {
       return d.keys().hasOnly(['name', 'phone', 'telegram', 'photoURL', 'viloyat', 'tuman', 'services', 'experience',
                                'price', 'about', 'works', 'status', 'availableUntil', 'ratingSum', 'ratingCount',
-                               'ratingAvg', 'ref', 'consent', 'consentAt', 'createdAt', 'updatedAt', 'verifiedAt'])
+                               'ratingAvg', 'ref', 'consent', 'consentAt', 'createdAt', 'updatedAt', 'verifiedAt',
+                               'verifyDocPath'])
         && str(d.name, 2, 60)
         && validRegion(d.viloyat)
         && str(d.tuman, 2, 60)
@@ -37,6 +38,7 @@ service cloud.firestore {
         && (!('about' in d) || str(d.about, 0, 600))
         && (!('photoURL' in d) || str(d.photoURL, 0, 600))
         && (!('works' in d) || (d.works is list && d.works.size() <= 8))
+        && (!('verifyDocPath' in d) || (d.verifyDocPath is string && d.verifyDocPath.matches('^verification/[A-Za-z0-9]+/[A-Za-z0-9._-]+$')))
         && (!('availableUntil' in d) || d.availableUntil == null
             || (d.availableUntil is timestamp && d.availableUntil <= request.time + duration.value(25, 'h')))
         && d.updatedAt == request.time;

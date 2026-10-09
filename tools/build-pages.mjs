@@ -33,7 +33,7 @@ function page({ path, title, description, h1, intro, bodyAttr = '', extra = '' }
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap">
-<link rel="stylesheet" href="/assets/css/app.css?v=2">
+<link rel="stylesheet" href="/assets/css/app.css?v=3">
 </head>
 <body${bodyAttr}>
 <header class="top">
@@ -111,6 +111,27 @@ for (const r of REGIONS) {
   <p class="muted" style="margin-top:20px;font-size:15px">Hududlar: ${esc(districts)}.</p>`,
   }));
 }
+
+// Ilova sahifalari: kirish, kabinet, admin (qidiruv formasisiz, o'z skripti bilan)
+function appPage({ path, title, description, mainId, script, noindex = false }) {
+  return page({ path, title, description, h1: '' })
+    .replace(/<main class="wrap">[\s\S]*<\/main>/, `<main class="wrap" id="${mainId}" aria-live="polite"></main>`)
+    .replace(/<script type="module" src="[^"]+"><\/script>/, `<script type="module" src="${script}"></script>`)
+    .replace('<meta name="theme-color"', `${noindex ? '<meta name="robots" content="noindex">\n' : ''}<meta name="theme-color"`);
+}
+write('kirish/index.html', appPage({
+  path: '/kirish/', mainId: 'auth', script: '/assets/js/pages/login.js?v=1',
+  title: "Elektriklar uchun bepul ro'yxatdan o'tish — AbuElectric",
+  description: "Elektrikmisiz? Bepul profil oching: mijozlar viloyat va tuman bo'yicha sizni topib, to'g'ridan-to'g'ri qo'ng'iroq qiladi.",
+}));
+write('kabinet/index.html', appPage({
+  path: '/kabinet/', mainId: 'cabinet', script: '/assets/js/pages/cabinet.js?v=1', noindex: true,
+  title: 'Kabinet — AbuElectric', description: 'Elektrik shaxsiy kabineti.',
+}));
+write('admin/index.html', appPage({
+  path: '/admin/', mainId: 'admin', script: '/assets/js/pages/admin.js?v=1', noindex: true,
+  title: 'Admin — AbuElectric', description: 'Admin panel.',
+}));
 
 // sitemap.xml (ustalar profillari keyingi bosqichda qo'shiladi)
 const urls = ['/', '/qidiruv/', '/kirish/', '/biz-haqimizda/', '/privacy-policy.html', ...REGIONS.map((r) => `/viloyat/${r.slug}/`)];
