@@ -24,5 +24,9 @@
     <p>Siz qidirgan sahifa topilmadi yoki ko'chirilgan.</p>
     <a class="btn btn-volt" href="/">Bosh sahifaga qaytish</a>
   </div>
+<script>
+  // abuelectric.uz/u/<id> ulashish havolasi (Render rewrite sozlanmagan bo'lsa ham) → usta profili
+  (function () { var m = location.pathname.match(/^\/u\/([A-Za-z0-9]{6,64})\/?$/); if (m) location.replace('/usta/?id=' + m[1]); })();
+</script>
 </body>
 </html>

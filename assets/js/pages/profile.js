@@ -128,10 +128,11 @@ function render(e, trips, reviews, photos) {
   if (location.hash === '#shikoyat') openReport('profile', e.id);
 
   document.getElementById('shareBtn').addEventListener('click', async () => {
-    const data = { title: `${e.name} — elektrik`, text: `${e.name}, elektrik (${region?.short || ''})`, url: location.href };
+    const shareUrl = `${location.origin}/u/${encodeURIComponent(e.id)}`; // Telegram/Instagram'da ism va rasm bilan chiqadi
+    const data = { title: `${e.name} — elektrik`, text: `${e.name}, elektrik (${region?.short || ''})`, url: shareUrl };
     try {
       if (navigator.share) await navigator.share(data);
-      else { await navigator.clipboard.writeText(location.href); document.getElementById('shareBtn').textContent = '✓ Havola nusxalandi'; }
+      else { await navigator.clipboard.writeText(shareUrl); document.getElementById('shareBtn').textContent = '✓ Havola nusxalandi'; }
     } catch {}
   });
 }

@@ -17,6 +17,17 @@ const next = safeNext(nextRaw);
 // Telegram orqali kirish serveri (Abu-Ustoz backend ichidagi alohida /ae modul)
 const AE_API = 'https://abu-ustoz-backend.onrender.com/ae';
 const POLL_MS = 2000;
+const TG_KEY = 'ae_tg_login';
+
+// Yangi usta haqida adminga Telegram xabari (xato bo'lsa ro'yxatdan o'tishga ta'sir qilmaydi)
+async function notifyRegistered(user) {
+  try {
+    const idToken = await user.getIdToken();
+    const ctl = new AbortController();
+    setTimeout(() => ctl.abort(), 4000);
+    await fetch(AE_API + '/notify/registered', { method: 'POST', headers: { Authorization: 'Bearer ' + idToken }, signal: ctl.signal });
+  } catch {}
+}
 
 // Telefon raqami: Telegram custom token'dagi 'tel' (yoki eski SMS kirishdagi phoneNumber)
 export async function userPhone(user) {
@@ -49,6 +60,22 @@ function telegramStep() {
 
   const fail = (msg) => { showError(card, msg); wait.hidden = true; stop(); };
   const stop = () => { clearInterval(timer); timer = null; };
+  const startPolling = () => { wait.hidden = false; if (!timer) timer = setInterval(poll, POLL_MS); poll(); };
+
+  // Telefon Telegram'ga o'tganda sahifani qayta yuklashi mumkin — kodni eslab qolamiz, kirish o'sha joydan davom etadi
+  const saved = () => { try { return JSON.parse(sessionStorage.getItem(TG_KEY) || 'null'); } catch { return null; } };
+  const remember = (o) => { try { sessionStorage.setItem(TG_KEY, JSON.stringify(o)); } catch {} };
+
+  function useCode(d) {
+    code = d.code;
+    deadline = d.deadline;
+    btn.href = `https://t.me/${d.bot}?start=${code}`;
+    btn.target = '_blank';
+    btn.rel = 'noopener';
+    btn.removeAttribute('aria-disabled');
+    btn.innerHTML = `${TG_ICON} Telegram orqali kirish`;
+    showError(card, '');
+  }
 
   async function prepare() {
     btn.setAttribute('aria-disabled', 'true');
@@ -60,18 +87,18 @@ function telegramStep() {
       if (r.status === 429) return fail("Juda ko'p urinish bo'ldi. 10 daqiqadan keyin qayta urinib ko'ring.");
       const d = await r.json();
       if (!d.code || !d.bot) throw new Error('bad');
-      code = d.code;
-      deadline = Date.now() + (d.expiresIn || 600) * 1000;
-      btn.href = `https://t.me/${d.bot}?start=${code}`;
-      btn.target = '_blank';
-      btn.rel = 'noopener';
-      btn.removeAttribute('aria-disabled');
-      btn.innerHTML = `${TG_ICON} Telegram orqali kirish`;
-      showError(card, '');
+      const s = { code: d.code, bot: d.bot, deadline: Date.now() + (d.expiresIn || 600) * 1000 - 15000, clicked: false };
+      remember(s);
+      useCode(s);
     } catch (err) {
       console.error(err);
       fail("Server bilan bog'lanib bo'lmadi. Internetni tekshirib, sahifani yangilang.");
     }
+  }
+
+  // Tasdiq kelgach: kartani "Kirilmoqda" holatiga o'tkazamiz — eski tugmalar ko'rinib qolmasin
+  function showSigningIn() {
+    card.innerHTML = `<div class="tg-done"><span class="spin"></span><b>Raqam tasdiqlandi ✓</b><span class="muted">Kirilmoqda…</span></div>`;
   }
 
   async function poll() {
@@ -82,7 +109,8 @@ function telegramStep() {
       const d = await (await fetch(`${AE_API}/login/poll?code=${code}`, { cache: 'no-store' })).json();
       if (d.status === 'done' && d.token) {
         stop();
-        wait.innerHTML = '<span class="spin"></span>Kirilmoqda…';
+        try { sessionStorage.removeItem(TG_KEY); } catch {}
+        showSigningIn();
         const a = await auth();
         const res = await a.signInWithCustomToken(a.auth, d.token);
         await afterLogin(res.user);
@@ -96,12 +124,22 @@ function telegramStep() {
 
   btn.addEventListener('click', (e) => {
     if (btn.getAttribute('aria-disabled')) { e.preventDefault(); return; }
-    wait.hidden = false;
-    if (!timer) timer = setInterval(poll, POLL_MS);
+    const s = saved();
+    if (s) remember({ ...s, clicked: true });
+    startPolling();
   });
   // Telegram'dan qaytganda darhol tekshiramiz
-  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && timer) poll(); });
-  prepare();
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && timer) { wait.innerHTML = '<span class="spin"></span>Tekshirilmoqda…'; poll(); }
+  });
+
+  const s = saved();
+  if (s && s.code && Date.now() < s.deadline) {
+    useCode(s);
+    if (s.clicked) { wait.innerHTML = '<span class="spin"></span>Tekshirilmoqda…'; startPolling(); }
+  } else {
+    prepare();
+  }
 }
 
 // ---------- 3. Kirgandan keyin ----------
@@ -162,6 +200,7 @@ async function profileStep(user) {
         createdAt: fs.serverTimestamp(),
         updatedAt: fs.serverTimestamp(),
       });
+      await notifyRegistered(user);
       location.replace('/kabinet/?yangi=1' + (photoFailed ? '&rasm=0' : ''));
     } catch (err) {
       console.error(err);
@@ -172,4 +211,5 @@ async function profileStep(user) {
 }
 
 // Avval kirgan bo'lsa — to'g'ridan-to'g'ri davom etamiz
+root.innerHTML = '<div class="auth-card"><div class="sk sk-line w60"></div><div class="sk sk-line w80"></div><div class="sk sk-btn"></div></div>';
 currentUser().then((u) => (u ? afterLogin(u) : telegramStep())).catch(() => telegramStep());

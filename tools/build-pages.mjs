@@ -33,7 +33,7 @@ function page({ path, title, description, h1, intro, bodyAttr = '', extra = '' }
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap">
-<link rel="stylesheet" href="/assets/css/app.css?v=5">
+<link rel="stylesheet" href="/assets/css/app.css?v=6">
 </head>
 <body${bodyAttr}>
 <header class="top">
@@ -120,7 +120,7 @@ function appPage({ path, title, description, mainId, script, noindex = false }) 
     .replace('<meta name="theme-color"', `${noindex ? '<meta name="robots" content="noindex">\n' : ''}<meta name="theme-color"`);
 }
 write('kirish/index.html', appPage({
-  path: '/kirish/', mainId: 'auth', script: '/assets/js/pages/login.js?v=2',
+  path: '/kirish/', mainId: 'auth', script: '/assets/js/pages/login.js?v=3',
   title: "Elektriklar uchun bepul ro'yxatdan o'tish — AbuElectric",
   description: "Elektrikmisiz? Bepul profil oching: mijozlar viloyat va tuman bo'yicha sizni topib, to'g'ridan-to'g'ri qo'ng'iroq qiladi.",
 }));
@@ -129,7 +129,7 @@ write('kabinet/index.html', appPage({
   title: 'Kabinet — AbuElectric', description: 'Elektrik shaxsiy kabineti.',
 }));
 write('admin/index.html', appPage({
-  path: '/admin/', mainId: 'admin', script: '/assets/js/pages/admin.js?v=1', noindex: true,
+  path: '/admin/', mainId: 'admin', script: '/assets/js/pages/admin.js?v=2', noindex: true,
   title: 'Admin — AbuElectric', description: 'Admin panel.',
 }).replace('</main>', '</main>\n<dialog class="lightbox" id="docView" onclick="this.close()"><img alt="Tasdiqlash hujjati"></dialog>'));
 

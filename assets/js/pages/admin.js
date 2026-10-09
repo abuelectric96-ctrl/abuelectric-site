@@ -37,6 +37,7 @@ function shell() {
   <div class="tabs" role="tablist">
     <button role="tab" data-tab="ustalar">Ustalar <span class="cnt">${all.length}</span></button>
     <button role="tab" data-tab="shikoyat">Shikoyatlar <span class="cnt${reports.length ? ' hot' : ''}">${reports.length}</span></button>
+    <button role="tab" data-tab="lead">Botga yozganlar <span class="cnt" id="leadCnt">…</span></button>
     <button role="tab" data-tab="stat">Statistika</button>
   </div>
   <div id="pane"></div>`;
@@ -51,6 +52,7 @@ function draw() {
   if (tab === 'ustalar') pane.innerHTML = listPane();
   if (tab === 'shikoyat') pane.innerHTML = reportsPane();
   if (tab === 'stat') pane.innerHTML = statPane();
+  if (tab === 'lead') { pane.innerHTML = leadsPane(); if (!leads) loadLeads(); }
   bindPane(pane);
 }
 
@@ -224,6 +226,45 @@ function bindPane(pane) {
   }));
 }
 
+// ---------- Botga yozganlar (raqam yuborgan, lekin anketani to'ldirmaganlar) ----------
+const AE_API = 'https://abu-ustoz-backend.onrender.com/ae';
+let leads = null, leadsErr = '';
+async function loadLeads() {
+  try {
+    const u = await currentUser();
+    const r = await fetch(AE_API + '/admin/leads', { headers: { Authorization: 'Bearer ' + (await u.getIdToken()) } });
+    if (!r.ok) throw new Error(r.status === 403 ? "Bu ro'yxat faqat asosiy admin uchun." : 'Server javob bermadi.');
+    leads = (await r.json()).leads || [];
+  } catch (err) { leads = []; leadsErr = err.message || 'Xato'; }
+  const c = document.getElementById('leadCnt');
+  if (c) c.textContent = leads.filter((l) => !isRegistered(l)).length;
+  if (tab === 'lead') draw();
+}
+const isRegistered = (l) => l.registered || all.some((e) => e.id === 'p' + l.phone.replace(/\D/g, ''));
+function leadsPane() {
+  if (!leads) return '<div class="pf-card"><div class="sk sk-line w60"></div><div class="sk sk-line w80"></div></div>';
+  if (leadsErr) return `<div class="state state-error"><b>⚠ ${esc(leadsErr)}</b></div>`;
+  const rows = [...leads].sort((a, b) => isRegistered(a) - isRegistered(b) || b.lastAt - a.lastAt);
+  if (!rows.length) return '<div class="state"><b>Hali hech kim botga raqam yubormagan</b></div>';
+  return `<p class="muted">Botga raqam yuborgan odamlar. Anketani to'ldirmaganlarga qo'ng'iroq qilib, ro'yxatdan o'tishga taklif qilsangiz bo'ladi.</p>
+  <div class="admin-list">${rows.map((l) => {
+    const reg = isRegistered(l);
+    const tg = l.username ? `https://t.me/${encodeURIComponent(l.username)}` : '';
+    return `<article class="arow ${reg ? 'st-verified' : ''}">
+      <div class="arow-main">
+        <b>${esc(l.name || 'Ismsiz')}</b> ${reg ? '<span class="pill pill-verified">Ro'yxatdan o'tgan</span>' : '<span class="pill">Anketa to'ldirilmagan</span>'}
+        <div class="muted">${esc(fmtPhone(l.phone))}${l.username ? ' · @' + esc(l.username) : ''}</div>
+        <div class="muted small">Oxirgi marta: ${day(l.lastAt)}${l.count > 1 ? ` · ${l.count} marta` : ''}</div>
+      </div>
+      <div class="arow-act">
+        <a class="btn btn-call btn-sm" href="tel:${esc(l.phone)}">📞 Qo'ng'iroq</a>
+        ${tg ? `<a class="btn btn-tg btn-sm" href="${tg}" target="_blank" rel="noopener">✈ Yozish</a>` : ''}
+        ${reg ? `<a class="btn btn-line btn-sm" href="/usta/?id=p${esc(l.phone.replace(/\D/g, ''))}" target="_blank">Profil</a>` : ''}
+      </div>
+    </article>`;
+  }).join('')}</div>`;
+}
+
 async function start() {
   root.innerHTML = '<div class="pf-card"><div class="sk sk-line w40"></div><div class="sk sk-line w80"></div></div>';
   const u = await currentUser();
@@ -235,7 +276,7 @@ async function start() {
     return;
   }
   fs = await firestore();
-  try { await loadAll(); shell(); }
+  try { await loadAll(); shell(); loadLeads(); }
   catch (err) { console.error(err); root.innerHTML = `<div class="state state-error"><b>⚠ ${esc(friendlyError(err))}</b></div>`; }
 }
 start();
