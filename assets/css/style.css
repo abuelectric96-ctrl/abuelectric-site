@@ -502,3 +502,50 @@ p { margin: 0; }
   .finder-main { padding-bottom: 8px; }
   .finder-photo { width: 220px; margin: 0 auto; }
 }
+
+/* ---------- Bosh sahifa hero: elektrik topish ---------- */
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.hero-find { padding-bottom: 72px; }
+.hero-find-form {
+  display: flex; gap: 10px; margin-top: 30px; max-width: 580px;
+  background: rgba(255, 255, 255, .07); border: 1px solid rgba(255, 255, 255, .14); border-radius: 20px; padding: 10px;
+}
+.hero-find-form select {
+  flex: 1; min-width: 0; min-height: 56px; border-radius: 14px; border: 0; padding: 0 14px;
+  font: 700 17px var(--font); background: #fff; color: #13201a;
+}
+.hero-find-form .btn { min-height: 56px; flex: none; }
+.hero-find .hero-actions { margin-top: 16px; }
+.hero-photo { margin: 0; position: relative; justify-self: center; align-self: end; width: 100%; max-width: 360px; }
+.hero-photo::before { content: ""; position: absolute; inset: 14% 4% 6%; z-index: -1; border-radius: 50%; background: radial-gradient(circle, rgba(255, 194, 26, .3), transparent 66%); }
+.hero-photo img { width: 100%; height: auto; filter: drop-shadow(0 26px 40px rgba(0, 0, 0, .55)); }
+.hero-photo figcaption {
+  position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); white-space: nowrap;
+  background: rgba(255, 255, 255, .95); color: var(--green-900); border-radius: 14px; padding: 8px 14px;
+  box-shadow: 0 10px 24px -8px rgba(0, 0, 0, .5); text-align: center; font-size: 13px; line-height: 1.3;
+}
+.hero-photo figcaption b { display: block; font-size: 15px; }
+.hero-photo figcaption span { color: #5b6862; font-weight: 600; }
+@media (max-width: 1020px) { .hero-photo { max-width: 260px; } }
+@media (max-width: 680px) {
+  .hero-find-form { flex-direction: column; }
+  .hero-find-form .btn { width: 100%; }
+  .hero-find .hero-actions .btn { flex: 1 1 100%; }
+  .hero-photo { max-width: 210px; margin-top: 8px; }
+}
+
+/* ---------- Abu-Ustoz sahifasi: iPhone eslatmasi ---------- */
+.ios-note { display: grid; gap: 6px; padding: 18px 20px; margin-bottom: 20px; border-radius: 18px; background: var(--volt-soft); border: 1px solid rgba(160, 110, 0, .2); }
+.ios-note b { font-size: 17px; }
+.ios-note span { color: var(--muted); }
+.ios-note.is-ios { background: #fdecec; border-color: rgba(198, 47, 47, .35); }
+.ios-note.is-ios b::after { content: " Siz hozir iPhone'dasiz."; color: #c62f2f; }
+/* Hero ustunlari matn uzunligi tufayli kengayib ketmasin */
+.hero-find .hero-grid { grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); }
+.hero-find .hero-grid > * { min-width: 0; }
+@media (max-width: 1020px) { .hero-find .hero-grid { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 680px) {
+  .hero-find h1 { font-size: clamp(30px, 8.6vw, 40px); }
+  .hero-find h1 em { white-space: normal; }
+  .hero-find h1 em svg { display: none; }
+}

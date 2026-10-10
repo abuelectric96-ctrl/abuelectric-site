@@ -24,7 +24,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@600;700&display=swap">
-<link rel="stylesheet" href="/assets/css/style.css?v=3">
+<link rel="stylesheet" href="/assets/css/style.css?v=5">
 <script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 
 <script type="application/ld+json">
@@ -120,8 +120,8 @@
 
 <main id="main">
 
-  <!-- HERO -->
-  <section class="hero">
+  <!-- HERO: ELEKTRIK TOPISH -->
+  <section class="hero hero-find" id="topish">
     <svg class="circuit" viewBox="0 0 1440 760" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
       <path class="trace" d="M-20 610 H260 L330 540 H620 L680 600 H900"/>
       <path class="trace" d="M760 -20 V120 L830 190 H1120 L1180 250 V520 L1240 580 H1460"/>
@@ -137,63 +137,30 @@
 
     <div class="wrap hero-grid">
       <div>
-        <span class="eyebrow">ABUELECTRIC MCHJ · Amudaryo</span>
-        <h1>Elektrni bilamiz.<br><em>Kodni yozamiz.<svg viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true"><path d="M2 9c40-6 120-8 196-3" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".55"/></svg></em></h1>
-        <p class="lead">Biz elektrik kasbini o'rgatuvchi Abu-Ustoz simulyatorini va boshqa foydali ilovalarni yaratamiz. Amudaryoda esa uyingiz va ishxonangiz elektr tarmog'ini o'zimiz o'rnatamiz va ta'mirlaymiz.</p>
+        <span class="eyebrow">ABUELECTRIC · Elektriklar katalogi</span>
+        <h1>Elektrik kerakmi?<br><em>Bir daqiqada toping.<svg viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true"><path d="M2 9c40-6 120-8 196-3" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".55"/></svg></em></h1>
+        <p class="lead">O'zbekistonning 14 viloyati va barcha tumanlaridagi elektriklar bir joyda. Viloyatni tanlang va ustaga to'g'ridan-to'g'ri qo'ng'iroq qiling, vositachisiz.</p>
+        <form class="hero-find-form" action="/qidiruv/" method="get">
+          <label class="sr-only" for="heroV">Viloyat</label>
+          <select id="heroV" name="v"><option value="">Butun O'zbekiston</option><option value="qoraqalpogiston">Qoraqalpog'iston Respublikasi</option><option value="andijon">Andijon viloyati</option><option value="buxoro">Buxoro viloyati</option><option value="fargona">Farg'ona viloyati</option><option value="jizzax">Jizzax viloyati</option><option value="xorazm">Xorazm viloyati</option><option value="namangan">Namangan viloyati</option><option value="navoiy">Navoiy viloyati</option><option value="qashqadaryo">Qashqadaryo viloyati</option><option value="samarqand">Samarqand viloyati</option><option value="sirdaryo">Sirdaryo viloyati</option><option value="surxondaryo">Surxondaryo viloyati</option><option value="toshkent-viloyati">Toshkent viloyati</option><option value="toshkent-shahri">Toshkent shahri</option></select>
+          <button class="btn btn-volt" type="submit"><svg><use href="#i-bolt"/></svg>Elektrik topish</button>
+        </form>
         <div class="hero-actions">
-          <a class="btn btn-volt" href="https://play.google.com/store/apps/details?id=com.abuustoz.elektrik" target="_blank" rel="noopener">
-            <svg><use href="#i-bolt"/></svg>Abu-Ustoz'ni yuklab olish
-          </a>
-          <a class="btn btn-ghost" href="/elektriklar/">Elektrik topish</a>
+          <a class="btn btn-ghost" href="/kirish/">Siz elektrikmisiz? Bepul ro'yxatdan o'ting</a>
         </div>
         <div class="hero-meta">
-          <span><svg><use href="#i-pin"/></svg>Amudaryo, Qoraqalpog'iston</span>
-          <span><svg><use href="#i-phone"/></svg>Google Play'da mavjud</span>
+          <span><svg><use href="#i-pin"/></svg>14 viloyat, barcha tumanlar</span>
+          <span><svg><use href="#i-phone"/></svg>To'g'ridan-to'g'ri qo'ng'iroq</span>
         </div>
       </div>
 
-      <div class="phones" aria-hidden="true">
-        <div class="phone back"><img src="/assets/img/abu-ustoz-02.webp" alt="" width="432" height="902" loading="eager"></div>
-        <div class="phone front"><img src="/assets/img/abu-ustoz-04.webp" alt="" width="432" height="902" loading="eager" fetchpriority="high"></div>
-        <div class="spark"><i><svg><use href="#i-bolt"/></svg></i><span>Sxemani yig'ing<small>tok haqiqiydek oqadi</small></span></div>
-      </div>
+      <figure class="hero-photo" aria-hidden="true">
+        <img src="/assets/img/abu-usta.webp" alt="" width="269" height="378" fetchpriority="high">
+        <figcaption><b>Ashirov Bahram</b><span>Elektrik usta · katalog asoschisi</span></figcaption>
+      </figure>
     </div>
   </section>
 
-  <!-- FAKTLAR -->
-  <div class="wrap facts">
-    <div class="facts-grid reveal">
-      <div class="fact"><b>60+</b><span>elektr komponenti</span></div>
-      <div class="fact"><b>14</b><span>bosqichli dars</span></div>
-      <div class="fact"><b>124</b><span>tilda ishlaydi</span></div>
-      <div class="fact"><b>6</b><span>ta o'z loyihamiz</span></div>
-    </div>
-  </div>
-
-  <!-- ELEKTRIK TOPISH -->
-  <section class="section" id="topish">
-    <div class="wrap">
-      <div class="finder reveal">
-        <div class="finder-main">
-        <div class="finder-text">
-          <span class="kicker">Yangi · Elektriklar katalogi</span>
-          <h2>O'zbekiston bo'ylab elektrik toping</h2>
-          <p>14 viloyat va barcha tumanlardagi ustalar bir joyda. Viloyatni tanlang va to'g'ridan-to'g'ri qo'ng'iroq qiling. Hozir bo'sh ustalar yashil belgi bilan ko'rinadi.</p>
-        </div>
-        <form class="finder-form" action="/qidiruv/" method="get">
-          <label for="finderV">Qaysi viloyatda?</label>
-          <select id="finderV" name="v"><option value="">Butun O'zbekiston</option><option value="qoraqalpogiston">Qoraqalpog'iston Respublikasi</option><option value="andijon">Andijon viloyati</option><option value="buxoro">Buxoro viloyati</option><option value="fargona">Farg'ona viloyati</option><option value="jizzax">Jizzax viloyati</option><option value="xorazm">Xorazm viloyati</option><option value="namangan">Namangan viloyati</option><option value="navoiy">Navoiy viloyati</option><option value="qashqadaryo">Qashqadaryo viloyati</option><option value="samarqand">Samarqand viloyati</option><option value="sirdaryo">Sirdaryo viloyati</option><option value="surxondaryo">Surxondaryo viloyati</option><option value="toshkent-viloyati">Toshkent viloyati</option><option value="toshkent-shahri">Toshkent shahri</option></select>
-          <button class="btn btn-volt" type="submit"><svg><use href="#i-bolt"/></svg>Elektrik topish</button>
-          <a class="finder-join" href="/kirish/">Siz elektrikmisiz? Bepul ro'yxatdan o'ting ›</a>
-        </form>
-        </div>
-        <figure class="finder-photo">
-          <img src="/assets/img/abu-usta.webp" alt="Ashirov Bahram, elektrik usta" width="269" height="378" loading="lazy">
-          <figcaption><b>Ashirov Bahram</b><span>Elektrik usta · katalog asoschisi</span></figcaption>
-        </figure>
-      </div>
-    </div>
-  </section>
 
   <!-- ILOVALAR -->
   <section class="section" id="ilovalar">
@@ -206,37 +173,17 @@
         <p>Har bir ilovani o'zimiz o'ylab topamiz, yozamiz va qo'llab-quvvatlaymiz. Avval o'z muammomizni hal qilamiz, keyin hammaga beramiz.</p>
       </div>
 
-      <article class="card flagship reveal">
-        <div class="flagship-body">
-          <div class="app-id">
-            <img src="/assets/img/abu-logo-192.png" alt="Abu-Ustoz ikonkasi" width="60" height="60" loading="lazy">
-            <div>
-              <h3>Abu-Ustoz</h3>
-              <small>Elektrik simulyatori · Ta'lim</small>
-            </div>
-          </div>
-          <p>O'zbekistondagi birinchi elektrik o'qitish simulyatori. Telefoningizda xavfsiz sxema yig'ing: avtomat, UZO, hisoblagich, rozetka va chiroqlarni ulang. Xato qilsangiz, ilova sababini tushuntirib beradi.</p>
-          <ul class="ticks">
-            <li>60+ haqiqiy elektr komponenti</li>
-            <li>14 bosqichli darslar</li>
-            <li>Elektr kalkulyatori</li>
-            <li>Sxema belgilari lug'ati</li>
-            <li>Sun'iy intellekt yordamchi</li>
-            <li>124 tilda, internetsiz ham</li>
-          </ul>
-          <div class="store-row">
-            <a class="store-btn" href="https://play.google.com/store/apps/details?id=com.abuustoz.elektrik" target="_blank" rel="noopener">
-              <svg><use href="#i-play"/></svg><span><small>Yuklab olish</small><b>Google Play</b></span>
-            </a>
-          </div>
-        </div>
-        <div class="flagship-shots" aria-hidden="true">
-          <div class="phone s1"><img src="/assets/img/abu-ustoz-01.webp" alt="" width="432" height="902" loading="lazy"></div>
-          <div class="phone s2"><img src="/assets/img/abu-ustoz-03.webp" alt="" width="432" height="902" loading="lazy"></div>
-        </div>
-      </article>
 
       <div class="apps">
+        <article class="card app reveal">
+          <div class="app-top">
+            <div class="app-icon"><img src="/assets/img/abu-logo-192.png" alt="Abu-Ustoz ikonkasi" width="52" height="52" loading="lazy"></div>
+            <span class="tag live">Android</span>
+          </div>
+          <h3>Abu-Ustoz · elektrik simulyatori</h3>
+          <p>O'zbekistondagi birinchi elektrik o'qitish simulyatori: 60+ komponent, 14 dars, 124 tilda. Hozircha faqat Android telefonlar uchun.</p>
+          <a class="more" href="/abu-ustoz/">Batafsil va yuklab olish <svg width="16" height="16"><use href="#i-arrow"/></svg></a>
+        </article>
         <article class="card app reveal">
           <div class="app-top">
             <div class="app-icon"><img src="/assets/img/99plus1-icon.png" alt="99+1 ikonkasi" width="52" height="52" loading="lazy"></div>

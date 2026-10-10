@@ -134,7 +134,7 @@ write('admin/index.html', appPage({
 }).replace('</main>', '</main>\n<dialog class="lightbox" id="docView" onclick="this.close()"><img alt="Tasdiqlash hujjati"></dialog>'));
 
 // sitemap.xml (ustalar profillari keyingi bosqichda qo'shiladi)
-const urls = ['/', '/elektriklar/', '/qidiruv/', '/kirish/', '/privacy-policy.html', ...REGIONS.map((r) => `/viloyat/${r.slug}/`)];
+const urls = ['/', '/elektriklar/', '/abu-ustoz/', '/qidiruv/', '/kirish/', '/privacy-policy.html', ...REGIONS.map((r) => `/viloyat/${r.slug}/`)];
 write('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map((u) => `  <url><loc>${SITE}${u}</loc></url>`).join('\n')}
