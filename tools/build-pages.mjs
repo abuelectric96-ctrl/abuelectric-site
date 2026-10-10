@@ -129,7 +129,7 @@ write('kabinet/index.html', appPage({
   title: 'Kabinet — AbuElectric', description: 'Elektrik shaxsiy kabineti.',
 }));
 write('admin/index.html', appPage({
-  path: '/admin/', mainId: 'admin', script: '/assets/js/pages/admin.js?v=2', noindex: true,
+  path: '/admin/', mainId: 'admin', script: '/assets/js/pages/admin.js?v=3', noindex: true,
   title: 'Admin — AbuElectric', description: 'Admin panel.',
 }).replace('</main>', '</main>\n<dialog class="lightbox" id="docView" onclick="this.close()"><img alt="Tasdiqlash hujjati"></dialog>'));
 
