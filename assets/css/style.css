@@ -549,3 +549,7 @@ p { margin: 0; }
   .hero-find h1 em { white-space: normal; }
   .hero-find h1 em svg { display: none; }
 }
+.store-btn-sm { align-self: flex-start; padding: 8px 14px 8px 10px; border-radius: 12px; }
+.store-btn-sm small { font-size: 10px; }
+.store-btn-sm b { font-size: 14px; }
+.app .store-btn-sm + .more { margin-top: 0; padding-top: 0; font-size: 14px; }
