@@ -14,7 +14,7 @@ const ms = (v) => (v == null ? 0 : typeof v === 'number' ? v : v.toMillis ? v.to
 const H24 = 24 * 3600e3;
 const MAX_WORKS = 8;
 
-let fs, user, me, trips = [], photos = [], admin = false;
+let fs, user, me, trips = [], photos = [], admin = false, tripSlot = null;
 
 function toast(msg, bad = false) {
   const t = document.createElement('div');
@@ -148,12 +148,12 @@ function bind() {
     if (b < a) return showError(tf, "Qaytish sanasi borish sanasidan oldin bo'lishi mumkin emas.");
     if (b < new Date()) return showError(tf, "Bu sanalar o'tib ketgan.");
     if ((b - a) / 864e5 > 61) return showError(tf, "Bir safar uzog'i bilan 2 oy bo'lishi mumkin.");
-    if (trips.length >= 5) return showError(tf, "Bir vaqtda 5 tagacha safar qo'shish mumkin. Eskisini o'chiring.");
+    if (trips.length >= 5 || !tripSlot) return showError(tf, "Bir vaqtda 5 tagacha safar qo'shish mumkin. Eskisini o'chiring.");
     showError(tf, '');
     const btn = tf.querySelector('button[type=submit]');
     btn.disabled = true;
     try {
-      await fs.addDoc(fs.collection(fs.db, 'trips'), { uid: user.uid, viloyat: v, tuman: t, from: fs.Timestamp.fromDate(a), to: fs.Timestamp.fromDate(b), createdAt: fs.serverTimestamp() });
+      await fs.setDoc(fs.doc(fs.db, 'trips', tripSlot), { uid: user.uid, viloyat: v, tuman: t, from: fs.Timestamp.fromDate(a), to: fs.Timestamp.fromDate(b), createdAt: fs.serverTimestamp() });
       toast("Safar qo'shildi");
       await loadTrips(); render();
     } catch (err) { console.error(err); showError(tf, friendlyError(err)); btn.disabled = false; }
@@ -173,7 +173,12 @@ function bind() {
     for (const f of files) {
       try {
         const data = await blobToDataURL(await compressForDb(f));
-        await fs.addDoc(fs.collection(fs.db, 'photos'), { uid: user.uid, data, createdAt: fs.serverTimestamp() });
+        // Bo'sh joy: uid_0..uid_7 (qoidalar shundan ortig'iga ruxsat bermaydi)
+        const usedIds = new Set(photos.map((p) => p.id));
+        const slot = [0, 1, 2, 3, 4, 5, 6, 7].map((n) => `${user.uid}_${n}`).find((s) => !usedIds.has(s));
+        if (!slot) throw Object.assign(new Error('full'), { code: 'media/full' });
+        await fs.setDoc(fs.doc(fs.db, 'photos', slot), { uid: user.uid, data, createdAt: fs.serverTimestamp() });
+        photos.push({ id: slot });
         added += 1;
       } catch (err) { console.error(err); lastErr = err; }
     }
@@ -232,7 +237,12 @@ async function loadPhotos() {
 
 async function loadTrips() {
   const snap = await fs.getDocs(fs.query(fs.collection(fs.db, 'trips'), fs.where('uid', '==', user.uid)));
-  trips = snap.docs.map((d) => ({ id: d.id, ...d.data() })).filter((t) => ms(t.to) >= Date.now()).sort((a, b) => ms(a.from) - ms(b.from));
+  const allTrips = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  trips = allTrips.filter((t) => ms(t.to) >= Date.now()).sort((a, b) => ms(a.from) - ms(b.from));
+  // Yangi safar uchun joy: avval bo'sh joy, bo'lmasa muddati o'tgan safarning joyi (qoidalar uid_0..uid_4 ga ruxsat beradi)
+  const slots = [0, 1, 2, 3, 4].map((n) => `${user.uid}_${n}`);
+  const used = new Map(allTrips.map((t) => [t.id, t]));
+  tripSlot = slots.find((s) => !used.has(s)) || slots.find((s) => ms(used.get(s).to) < Date.now()) || null;
 }
 
 async function start() {

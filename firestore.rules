@@ -91,9 +91,21 @@ service cloud.firestore {
     }
 
     // "Vaqtincha boraman"
+    // ID = {uid}_{0..4} — bitta ustaga uzog'i bilan 5 ta safar (eski joyni yangisi bilan almashtirish mumkin)
+    function tripSlot(id) { return id.matches('^' + request.auth.uid + '_[0-4]$'); }
     match /trips/{id} {
       allow read: if true;
-      allow create: if hasPhone()
+      allow update: if signedIn() && resource.data.uid == request.auth.uid && tripSlot(id)
+        && request.resource.data.keys().hasOnly(['uid', 'viloyat', 'tuman', 'from', 'to', 'createdAt'])
+        && request.resource.data.uid == request.auth.uid
+        && validRegion(request.resource.data.viloyat)
+        && str(request.resource.data.tuman, 0, 60)
+        && request.resource.data.from is timestamp && request.resource.data.to is timestamp
+        && request.resource.data.to > request.time
+        && request.resource.data.to >= request.resource.data.from
+        && request.resource.data.to <= request.resource.data.from + duration.value(62, 'd')
+        && request.resource.data.createdAt == request.time;
+      allow create: if hasPhone() && tripSlot(id)
         && request.resource.data.keys().hasOnly(['uid', 'viloyat', 'tuman', 'from', 'to', 'createdAt'])
         && request.resource.data.uid == request.auth.uid
         && exists(/databases/$(database)/documents/electricians/$(request.auth.uid))
@@ -105,7 +117,6 @@ service cloud.firestore {
         && request.resource.data.to <= request.resource.data.from + duration.value(62, 'd')
         && request.resource.data.createdAt == request.time;
       allow delete: if isAdmin() || (signedIn() && resource.data.uid == request.auth.uid);
-      allow update: if isAdmin();
     }
 
     // Sharhlar: ID = {elektrikId}_{mijozUid} → bitta odam bitta ustaga bitta sharh
@@ -136,9 +147,10 @@ service cloud.firestore {
     function imageData(v, maxLen) {
       return v is string && v.size() <= maxLen && v.split(',')[0] in ['data:image/webp;base64', 'data:image/jpeg;base64'];
     }
+    // ID = {uid}_{0..7} — bitta ustaga uzog'i bilan 8 ta ish rasmi
     match /photos/{id} {
       allow read: if true;
-      allow create: if hasPhone()
+      allow create: if hasPhone() && id.matches('^' + request.auth.uid + '_[0-7]$')
         && request.resource.data.keys().hasOnly(['uid', 'data', 'createdAt'])
         && request.resource.data.uid == request.auth.uid
         && exists(/databases/$(database)/documents/electricians/$(request.auth.uid))

@@ -125,7 +125,7 @@ write('kirish/index.html', appPage({
   description: "Elektrikmisiz? Bepul profil oching: mijozlar viloyat va tuman bo'yicha sizni topib, to'g'ridan-to'g'ri qo'ng'iroq qiladi.",
 }));
 write('kabinet/index.html', appPage({
-  path: '/kabinet/', mainId: 'cabinet', script: '/assets/js/pages/cabinet.js?v=1', noindex: true,
+  path: '/kabinet/', mainId: 'cabinet', script: '/assets/js/pages/cabinet.js?v=2', noindex: true,
   title: 'Kabinet — AbuElectric', description: 'Elektrik shaxsiy kabineti.',
 }));
 write('admin/index.html', appPage({

@@ -53,11 +53,11 @@ await t("hamma profilni o'qiy oladi", () => assertSucceeds(getDoc(doc(mehmon, 'e
 await t("qidiruv (status bilan) — ruxsat", () => assertSucceeds(getDocs(query(collection(mehmon, 'electricians'), where('status', 'in', ['verified', 'pending']), where('viloyat', '==', 'qoraqalpogiston')))));
 
 console.log('\nIsh rasmlari va hujjat');
-await t("ish rasmi 110 KB — ruxsat", () => assertSucceeds(addDoc(collection(usta, 'photos'), { uid: 'usta1', data: img(110000), createdAt: serverTimestamp() })));
-await t("ish rasmi 390 KB — ruxsat", () => assertSucceeds(addDoc(collection(usta, 'photos'), { uid: 'usta1', data: img(390000), createdAt: serverTimestamp() })));
-await t("ish rasmi 450 KB — rad", () => assertFails(addDoc(collection(usta, 'photos'), { uid: 'usta1', data: img(450000), createdAt: serverTimestamp() })));
-await t("birovning nomidan rasm — rad", () => assertFails(addDoc(collection(begona, 'photos'), { uid: 'usta1', data: img(1000), createdAt: serverTimestamp() })));
-await t("profili yo'q odam rasm qo'shishi — rad", () => assertFails(addDoc(collection(mijoz, 'photos'), { uid: 'mijoz1', data: img(1000), createdAt: serverTimestamp() })));
+await t("ish rasmi 110 KB — ruxsat", () => assertSucceeds(setDoc(doc(usta, 'photos', 'usta1_0'), { uid: 'usta1', data: img(110000), createdAt: serverTimestamp() })));
+await t("ish rasmi 390 KB — ruxsat", () => assertSucceeds(setDoc(doc(usta, 'photos', 'usta1_1'), { uid: 'usta1', data: img(390000), createdAt: serverTimestamp() })));
+await t("ish rasmi 450 KB — rad", () => assertFails(setDoc(doc(usta, 'photos', 'usta1_2'), { uid: 'usta1', data: img(450000), createdAt: serverTimestamp() })));
+await t("birovning nomidan rasm — rad", () => assertFails(setDoc(doc(begona, 'photos', 'usta1_3'), { uid: 'usta1', data: img(1000), createdAt: serverTimestamp() })));
+await t("profili yo'q odam rasm qo'shishi — rad", () => assertFails(setDoc(doc(mijoz, 'photos', 'mijoz1_4'), { uid: 'mijoz1', data: img(1000), createdAt: serverTimestamp() })));
 await t("tasdiqlash hujjati — ruxsat", () => assertSucceeds(setDoc(doc(usta, 'verifications', 'usta1'), { data: img(300000), createdAt: serverTimestamp() })));
 await t("hujjatni begona o'qishi — rad", () => assertFails(getDoc(doc(begona, 'verifications', 'usta1'))));
 await t("hujjatni admin o'qishi — ruxsat", () => assertSucceeds(getDoc(doc(admin, 'verifications', 'usta1'))));
@@ -65,10 +65,20 @@ await t("verifyDocPath yozish — ruxsat", () => assertSucceeds(updateDoc(doc(us
 
 console.log('\nVaqtincha boraman');
 const now = Date.now();
-await t("safar 10 kunga — ruxsat", () => assertSucceeds(addDoc(collection(usta, 'trips'), { uid: 'usta1', viloyat: 'toshkent-shahri', tuman: '', from: Timestamp.fromMillis(now), to: Timestamp.fromMillis(now + 10 * 864e5), createdAt: serverTimestamp() })));
-await t("safar 3 oyga — rad", () => assertFails(addDoc(collection(usta, 'trips'), { uid: 'usta1', viloyat: 'toshkent-shahri', tuman: '', from: Timestamp.fromMillis(now), to: Timestamp.fromMillis(now + 90 * 864e5), createdAt: serverTimestamp() })));
-await t("o'tib ketgan safar — rad", () => assertFails(addDoc(collection(usta, 'trips'), { uid: 'usta1', viloyat: 'toshkent-shahri', tuman: '', from: Timestamp.fromMillis(now - 20 * 864e5), to: Timestamp.fromMillis(now - 10 * 864e5), createdAt: serverTimestamp() })));
+await t("safar 10 kunga — ruxsat", () => assertSucceeds(setDoc(doc(usta, 'trips', 'usta1_0'), { uid: 'usta1', viloyat: 'toshkent-shahri', tuman: '', from: Timestamp.fromMillis(now), to: Timestamp.fromMillis(now + 10 * 864e5), createdAt: serverTimestamp() })));
+await t("safar 3 oyga — rad", () => assertFails(setDoc(doc(usta, 'trips', 'usta1_1'), { uid: 'usta1', viloyat: 'toshkent-shahri', tuman: '', from: Timestamp.fromMillis(now), to: Timestamp.fromMillis(now + 90 * 864e5), createdAt: serverTimestamp() })));
+await t("o'tib ketgan safar — rad", () => assertFails(setDoc(doc(usta, 'trips', 'usta1_2'), { uid: 'usta1', viloyat: 'toshkent-shahri', tuman: '', from: Timestamp.fromMillis(now - 20 * 864e5), to: Timestamp.fromMillis(now - 10 * 864e5), createdAt: serverTimestamp() })));
 await t("safar qidiruvi — ruxsat", () => assertSucceeds(getDocs(query(collection(mehmon, 'trips'), where('viloyat', '==', 'toshkent-shahri'), where('to', '>=', new Date())))));
+
+
+console.log('\nJoy cheklovlari');
+await t("rasm ID'si uid_8 (9-joy) - rad", () => assertFails(setDoc(doc(usta, 'photos', 'usta1_8'), { uid: 'usta1', data: img(100), createdAt: serverTimestamp() })));
+await t("tasodifiy rasm ID'si - rad", () => assertFails(addDoc(collection(usta, 'photos'), { uid: 'usta1', data: img(100), createdAt: serverTimestamp() })));
+await t("birovning joyiga rasm - rad", () => assertFails(setDoc(doc(begona, 'photos', 'usta1_7'), { uid: 'begona', data: img(100), createdAt: serverTimestamp() })));
+await t("safar uid_5 (6-joy) - rad", () => assertFails(setDoc(doc(usta, 'trips', 'usta1_5'), { uid: 'usta1', viloyat: 'toshkent-shahri', tuman: '', from: Timestamp.fromMillis(now), to: Timestamp.fromMillis(now + 864e5), createdAt: serverTimestamp() })));
+await t("tasodifiy safar ID'si - rad", () => assertFails(addDoc(collection(usta, 'trips'), { uid: 'usta1', viloyat: 'toshkent-shahri', tuman: '', from: Timestamp.fromMillis(now), to: Timestamp.fromMillis(now + 864e5), createdAt: serverTimestamp() })));
+await t("o'z safar joyini yangilash - ruxsat", () => assertSucceeds(setDoc(doc(usta, 'trips', 'usta1_0'), { uid: 'usta1', viloyat: 'samarqand', tuman: '', from: Timestamp.fromMillis(now), to: Timestamp.fromMillis(now + 3 * 864e5), createdAt: serverTimestamp() })));
+await t("birovning safarini yangilash - rad", () => assertFails(setDoc(doc(begona, 'trips', 'usta1_0'), { uid: 'begona', viloyat: 'samarqand', tuman: '', from: Timestamp.fromMillis(now), to: Timestamp.fromMillis(now + 864e5), createdAt: serverTimestamp() })));
 
 async function review(db, uid, rating, eid = 'usta1') {
   await runTransaction(db, async (tx) => {
@@ -111,7 +121,7 @@ const tgSoxta = env.authenticatedContext('p998905556688', { tel: '+79001234567' 
 await t("Telegram raqami bilan profil — ruxsat", () => assertSucceeds(setDoc(doc(tgUsta, 'electricians', 'p998905556677'), profile({ phone: '+998905556677' }))));
 await t("Telegram: boshqa raqam yozish — rad", () => assertFails(setDoc(doc(tgUsta, 'electricians', 'p998905556677'), profile({ phone: '+998901112233' }))));
 await t("Telegram: chet el raqami — rad", () => assertFails(setDoc(doc(tgSoxta, 'electricians', 'p998905556688'), profile({ phone: '+79001234567' }))));
-await t("Telegram: ish rasmi — ruxsat", () => assertSucceeds(addDoc(collection(tgUsta, 'photos'), { uid: 'p998905556677', data: img(5000), createdAt: serverTimestamp() })));
+await t("Telegram: ish rasmi — ruxsat", () => assertSucceeds(setDoc(doc(tgUsta, 'photos', 'p998905556677_5'), { uid: 'p998905556677', data: img(5000), createdAt: serverTimestamp() })));
 
 console.log(`\n${pass} ta o'tdi, ${fail} ta xato\n`);
 await env.cleanup();

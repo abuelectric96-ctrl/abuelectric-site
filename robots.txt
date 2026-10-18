@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /admin/
+Disallow: /kabinet/
 
 Sitemap: https://abuelectric.uz/sitemap.xml
+Sitemap: https://abuelectric.uz/u/sitemap.xml
