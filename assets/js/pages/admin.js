@@ -240,6 +240,7 @@ async function loadLeads() {
   if (c) c.textContent = leads.filter((l) => !isRegistered(l)).length;
   if (tab === 'lead') draw();
 }
+const COURSE_NAMES = { kurs_2h: 'Kurs: 2 hafta', kurs_1m: 'Kurs: 1 oy', kurs: 'Kurs: savol' };
 const isRegistered = (l) => l.registered || all.some((e) => e.id === 'p' + l.phone.replace(/\D/g, ''));
 function leadsPane() {
   if (!leads) return '<div class="pf-card"><div class="sk sk-line w60"></div><div class="sk sk-line w80"></div></div>';
@@ -252,7 +253,7 @@ function leadsPane() {
     const tg = l.username ? `https://t.me/${encodeURIComponent(l.username)}` : '';
     return `<article class="arow ${reg ? 'st-verified' : ''}">
       <div class="arow-main">
-        <b>${esc(l.name || 'Ismsiz')}</b> ${reg ? `<span class="pill pill-verified">Ro'yxatdan o'tgan</span>` : `<span class="pill">Anketa to'ldirilmagan</span>`}
+        <b>${esc(l.name || 'Ismsiz')}</b> ${l.course ? `<span class="pill pill-course">📚 ${esc(COURSE_NAMES[l.course] || 'Kurs')}</span>` : ''} ${reg ? `<span class="pill pill-verified">Ro'yxatdan o'tgan</span>` : `<span class="pill">Anketa to'ldirilmagan</span>`}
         <div class="muted">${esc(fmtPhone(l.phone))}${l.username ? ' · @' + esc(l.username) : ''}</div>
         <div class="muted small">Oxirgi marta: ${day(l.lastAt)}${l.count > 1 ? ` · ${l.count} marta` : ''}</div>
       </div>

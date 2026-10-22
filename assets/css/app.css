@@ -401,3 +401,4 @@ code, .uid { font-family: ui-monospace, Consolas, monospace; background: var(--b
 .tg-wait[hidden] { display: none; }
 .tg-done { display: grid; justify-items: center; gap: 10px; padding: 28px 0; text-align: center; font-size: 18px; }
 .tg-done .spin { width: 28px; height: 28px; color: #229ed9; }
+.pill-course { background: var(--volt-soft); color: #7a5a00; }

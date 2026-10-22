@@ -553,3 +553,41 @@ p { margin: 0; }
 .store-btn-sm small { font-size: 10px; }
 .store-btn-sm b { font-size: 14px; }
 .app .store-btn-sm + .more { margin-top: 0; padding-top: 0; font-size: 14px; }
+
+/* ---------- Kurs ---------- */
+.kurs-banner {
+  display: flex; align-items: center; gap: 18px; margin-top: 40px; padding: 20px 22px; border-radius: 22px; text-decoration: none; color: var(--text);
+  background: linear-gradient(110deg, var(--volt-soft), var(--surface) 70%); border: 1.5px solid rgba(224, 168, 0, .45); box-shadow: var(--shadow-sm);
+  transition: transform .15s ease, box-shadow .2s ease;
+}
+.kurs-banner:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.kb-icon { font-size: 34px; flex: none; }
+.kb-text { flex: 1; display: grid; gap: 4px; }
+.kb-text b { font: 700 19px/1.25 var(--display); }
+.kb-text span { color: var(--muted); font-size: 15px; }
+.kb-btn { flex: none; }
+@media (max-width: 680px) { .kurs-banner { flex-wrap: wrap; } .kb-btn { width: 100%; } }
+
+.kurs-hero { padding-bottom: 80px; }
+.kurs-hero h1 { font-size: clamp(32px, 5vw, 58px); }
+.plans { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 760px) { .plans { grid-template-columns: 1fr; } }
+.plan { padding: 30px; display: flex; flex-direction: column; gap: 10px; position: relative; }
+.plan-best { border: 2px solid var(--volt); box-shadow: var(--shadow); }
+.plan-tag { align-self: flex-start; font-size: 13px; font-weight: 800; padding: 5px 12px; border-radius: 99px; background: var(--green-100); color: var(--accent); }
+.plan-best .plan-tag { background: var(--volt); color: #1a1400; }
+.plan h3 { font-size: 24px; }
+.plan-price { font: 700 clamp(30px, 4vw, 40px)/1.1 var(--display); color: var(--text); letter-spacing: -.02em; }
+.plan-price small { font-size: 16px; color: var(--muted); font-family: var(--font); font-weight: 700; }
+.plan .ticks { grid-template-columns: 1fr; margin: 10px 0 20px; }
+.plan .btn { margin-top: auto; }
+.btn-block { width: 100%; }
+.plan-note { margin-top: 20px; color: var(--muted); text-align: center; }
+/* Menyu: punktlar ko'payganda bir qatorda tursin */
+.nav a { white-space: nowrap; }
+@media (max-width: 1260px) and (min-width: 1021px) {
+  .header .wrap { gap: 14px; }
+  .nav { gap: 0; }
+  .nav a { padding: 8px 8px; font-size: 14px; }
+  .header-cta { padding: 0 14px; }
+}
