@@ -115,6 +115,19 @@ await t("o'zini admin qilish — rad", () => assertFails(setDoc(doc(begona, 'adm
 await t("oddiy odam profilni o'chirishi — rad", () => assertFails(deleteDoc(doc(begona, 'electricians', 'usta1'))));
 await t("admin profilni o'chiradi — ruxsat", () => assertSucceeds(deleteDoc(doc(admin, 'electricians', 'usta1'))));
 
+console.log('\nKurs arizalari');
+const app = (extra = {}) => ({ name: 'Aliyev Sardor', phone: '+998901234567', viloyat: 'fargona', address: "Qo'qon shahri", plan: 'kurs_1m', status: 'new', source: '', createdAt: serverTimestamp(), ...extra });
+await t("kirishsiz ariza — ruxsat", () => assertSucceeds(setDoc(doc(mehmon, 'course_apps', '998901234567'), app())));
+await t("shu raqamdan ikkinchi ariza — rad", () => assertFails(setDoc(doc(mehmon, 'course_apps', '998901234567'), app({ name: 'Boshqa Ism' }))));
+await t("ID va telefon mos emas — rad", () => assertFails(setDoc(doc(mehmon, 'course_apps', '998907777777'), app())));
+await t("noma'lum tarif — rad", () => assertFails(setDoc(doc(mehmon, 'course_apps', '998901111111'), app({ phone: '+998901111111', plan: 'kurs_free' }))));
+await t("o'zini 'paid' qilib yozish — rad", () => assertFails(setDoc(doc(mehmon, 'course_apps', '998902222222'), app({ phone: '+998902222222', status: 'paid' }))));
+await t("ortiqcha maydon — rad", () => assertFails(setDoc(doc(mehmon, 'course_apps', '998903333333'), app({ phone: '+998903333333', hack: 1 }))));
+await t("arizalarni begona o'qishi — rad", () => assertFails(getDocs(collection(begona, 'course_apps'))));
+await t("admin arizalarni o'qiydi — ruxsat", () => assertSucceeds(getDocs(collection(admin, 'course_apps'))));
+await t("admin holatni o'zgartiradi — ruxsat", () => assertSucceeds(updateDoc(doc(admin, 'course_apps', '998901234567'), { status: 'called', updatedAt: serverTimestamp() })));
+await t("admin ismni o'zgartira olmaydi — rad", () => assertFails(updateDoc(doc(admin, 'course_apps', '998901234567'), { name: 'X Y Z' })));
+
 console.log('\nTelegram orqali kirgan foydalanuvchi');
 const tgUsta = env.authenticatedContext('p998905556677', { tel: '+998905556677' }).firestore();
 const tgSoxta = env.authenticatedContext('p998905556688', { tel: '+79001234567' }).firestore();

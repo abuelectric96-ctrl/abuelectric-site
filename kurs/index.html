@@ -24,7 +24,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@600;700&display=swap">
-<link rel="stylesheet" href="/assets/css/style.css?v=8">
+<link rel="stylesheet" href="/assets/css/style.css?v=9">
 <script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 
 <script type="application/ld+json">
@@ -97,7 +97,7 @@
       <h1>Elektrik kasbini<br><em>amaliyotda o'rganing.</em></h1>
       <p class="lead">Ko'p yillik tajribaga ega usta bilan amaliy kurs: oddiy rozetkadan to elektr shitini yig'ishgacha. Kurs <b>10-noyabrdan</b> boshlanadi.</p>
       <div class="hero-actions">
-        <a class="btn btn-volt" href="#tariflar"><svg><use href="#i-bolt"/></svg>Tarifni tanlash</a>
+        <a class="btn btn-volt" href="#ariza"><svg><use href="#i-bolt"/></svg>Kursga yozilish</a>
         <a class="btn btn-ghost" href="https://t.me/Abuelectric_bot?start=kurs" target="_blank" rel="noopener">Savol berish</a>
       </div>
       <div class="hero-meta">
@@ -130,7 +130,7 @@
             <li>Kabel kesimini tanlash</li>
             <li>Oddiy nosozliklarni topish</li>
           </ul>
-          <a class="btn btn-line btn-block" href="https://t.me/Abuelectric_bot?start=kurs_2h" target="_blank" rel="noopener"><svg><use href="#i-tg"/></svg>2 haftalikka yozilish</a>
+          <a class="btn btn-line btn-block" href="#ariza" data-plan="kurs_2h">2 haftalikka yozilish</a>
         </article>
 
         <article class="card plan plan-best reveal">
@@ -145,7 +145,7 @@
             <li>Murakkab nosozliklar va avariyalar</li>
             <li>Mijoz bilan ishlash, narx belgilash</li>
           </ul>
-          <a class="btn btn-volt btn-block" href="https://t.me/Abuelectric_bot?start=kurs_1m" target="_blank" rel="noopener"><svg><use href="#i-tg"/></svg>1 oylikka yozilish</a>
+          <a class="btn btn-volt btn-block" href="#ariza" data-plan="kurs_1m">1 oylikka yozilish</a>
         </article>
       </div>
 
@@ -153,21 +153,68 @@
     </div>
   </section>
 
-  <!-- QANDAY YOZILISH -->
-  <section class="section">
+  <!-- RO'YXATDAN O'TISH FORMASI -->
+  <section class="section" id="ariza">
     <div class="wrap">
-      <div class="section-head reveal">
-        <div>
-          <span class="kicker">Yozilish</span>
-          <h2>3 qadamda yoziling</h2>
+      <div class="apply reveal">
+        <div class="apply-intro">
+          <span class="kicker">Ro'yxatdan o'tish</span>
+          <h2>Kursga yoziling</h2>
+          <p>Formani to'ldiring — administrator siz bilan bog'lanib, kurs joyi, vaqti va to'lov tartibini aytadi.</p>
+          <ul class="ticks">
+            <li>Ro'yxatdan o'tish bepul</li>
+            <li>To'lov administrator bilan kelishilgach</li>
+            <li>Kurs 10-noyabrdan boshlanadi</li>
+          </ul>
         </div>
+
+        <form class="apply-form" id="applyForm" novalidate>
+          <div class="af-field">
+            <label for="afName">Ism va familiya *</label>
+            <input id="afName" name="name" maxlength="60" autocomplete="name" placeholder="Masalan: Aliyev Sardor">
+          </div>
+          <div class="af-field">
+            <label for="afPhone">Telefon raqam *</label>
+            <div class="af-phone"><span>+998</span><input id="afPhone" name="phone" inputmode="numeric" autocomplete="tel-national" placeholder="90 123 45 67" maxlength="12"></div>
+          </div>
+          <div class="af-field">
+            <label for="afRegion">Viloyat *</label>
+            <select id="afRegion" name="viloyat">
+              <option value="">Tanlang</option>
+              <option value="qoraqalpogiston">Qoraqalpog'iston Respublikasi</option>
+              <option value="andijon">Andijon viloyati</option>
+              <option value="buxoro">Buxoro viloyati</option>
+              <option value="fargona">Farg'ona viloyati</option>
+              <option value="jizzax">Jizzax viloyati</option>
+              <option value="xorazm">Xorazm viloyati</option>
+              <option value="namangan">Namangan viloyati</option>
+              <option value="navoiy">Navoiy viloyati</option>
+              <option value="qashqadaryo">Qashqadaryo viloyati</option>
+              <option value="samarqand">Samarqand viloyati</option>
+              <option value="sirdaryo">Sirdaryo viloyati</option>
+              <option value="surxondaryo">Surxondaryo viloyati</option>
+              <option value="toshkent-viloyati">Toshkent viloyati</option>
+              <option value="toshkent-shahri">Toshkent shahri</option>
+            </select>
+          </div>
+          <div class="af-field">
+            <label for="afAddress">Yashash manzili (tuman, mahalla) *</label>
+            <input id="afAddress" name="address" maxlength="150" autocomplete="street-address" placeholder="Masalan: Amudaryo tumani, Mang'it shahri">
+          </div>
+          <fieldset class="af-field">
+            <legend>Qaysi kurs? *</legend>
+            <div class="af-plans">
+              <label class="af-plan"><input type="radio" name="plan" value="kurs_2h"><span><b>2 haftalik</b><small>1 800 000 so'm</small></span></label>
+              <label class="af-plan"><input type="radio" name="plan" value="kurs_1m"><span><b>1 oylik</b><small>2 100 000 so'm</small></span></label>
+            </div>
+          </fieldset>
+          <!-- botlar uchun tuzoq: odamlar ko'rmaydi -->
+          <input class="af-hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <p class="af-error" role="alert" hidden></p>
+          <button class="btn btn-volt btn-block" type="submit"><svg><use href="#i-bolt"/></svg>Ro'yxatdan o'tish</button>
+          <p class="af-note">Ma'lumotlaringiz faqat kurs bo'yicha bog'lanish uchun ishlatiladi.</p>
+        </form>
       </div>
-      <ol class="steps reveal">
-        <li><b>Tarifni tanlang</b><span>Yuqoridagi tugmani bosing — Telegram'da @Abuelectric_bot ochiladi.</span></li>
-        <li><b>Raqamingizni yuboring</b><span>Botda «📱 Raqamni yuborish» tugmasini bosing.</span></li>
-        <li><b>Qo'ng'iroqni kuting</b><span>Administrator siz bilan bog'lanib, joy, vaqt va to'lovni aytadi.</span></li>
-        <li><b>Kursga keling</b><span>10-noyabrdan darslar boshlanadi.</span></li>
-      </ol>
     </div>
   </section>
 
@@ -206,5 +253,6 @@
 </footer>
 
 <script src="/assets/js/main.js?v=2" defer></script>
+<script type="module" src="/assets/js/pages/kurs.js?v=1"></script>
 </body>
 </html>

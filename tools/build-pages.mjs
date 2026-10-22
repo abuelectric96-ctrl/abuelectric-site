@@ -33,7 +33,7 @@ function page({ path, title, description, h1, intro, bodyAttr = '', extra = '' }
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap">
-<link rel="stylesheet" href="/assets/css/app.css?v=7">
+<link rel="stylesheet" href="/assets/css/app.css?v=8">
 </head>
 <body${bodyAttr}>
 <header class="top">
@@ -129,7 +129,7 @@ write('kabinet/index.html', appPage({
   title: 'Kabinet — AbuElectric', description: 'Elektrik shaxsiy kabineti.',
 }));
 write('admin/index.html', appPage({
-  path: '/admin/', mainId: 'admin', script: '/assets/js/pages/admin.js?v=4', noindex: true,
+  path: '/admin/', mainId: 'admin', script: '/assets/js/pages/admin.js?v=5', noindex: true,
   title: 'Admin — AbuElectric', description: 'Admin panel.',
 }).replace('</main>', '</main>\n<dialog class="lightbox" id="docView" onclick="this.close()"><img alt="Tasdiqlash hujjati"></dialog>'));
 

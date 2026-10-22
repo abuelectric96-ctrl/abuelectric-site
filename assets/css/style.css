@@ -591,3 +591,33 @@ p { margin: 0; }
   .nav a { padding: 8px 8px; font-size: 14px; }
   .header-cta { padding: 0 14px; }
 }
+
+/* ===== Kursga ariza formasi ===== */
+.apply { display: grid; grid-template-columns: 1fr 1.2fr; gap: 32px; align-items: start; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow); }
+.apply-intro h2 { margin-top: 0; }
+.apply-form { display: grid; gap: 16px; }
+.af-field { display: grid; gap: 6px; border: 0; margin: 0; padding: 0; min-width: 0; }
+.af-field > label, .af-field > legend { font-weight: 700; font-size: 14px; padding: 0; margin-bottom: 6px; }
+.af-field input, .af-field select { width: 100%; font: inherit; font-size: 16px; color: var(--text); background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; outline: none; transition: border-color .15s, box-shadow .15s; }
+.af-field input:focus, .af-field select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent); }
+.af-phone { display: flex; align-items: stretch; }
+.af-phone span { display: flex; align-items: center; padding: 0 12px; font-weight: 700; background: var(--volt-soft); border: 1px solid var(--border); border-right: 0; border-radius: var(--radius-sm) 0 0 var(--radius-sm); }
+.af-phone input { border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
+.af-plans { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.af-plan { position: relative; cursor: pointer; }
+.af-plan input { position: absolute; opacity: 0; pointer-events: none; }
+.af-plan span { display: grid; gap: 2px; padding: 14px; border: 2px solid var(--border); border-radius: var(--radius-sm); background: var(--bg); transition: border-color .15s, background .15s; }
+.af-plan small { color: var(--muted); font-size: 14px; }
+.af-plan input:checked + span { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--surface)); }
+.af-plan input:focus-visible + span { box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent); }
+.af-hp { position: absolute !important; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.af-error { margin: 0; padding: 10px 14px; border-radius: var(--radius-sm); background: #fde8e8; color: #9b1c1c; font-weight: 600; font-size: 14px; }
+.af-error[hidden] { display: none; }
+.af-note { margin: 0; font-size: 13px; color: var(--muted); text-align: center; }
+.af-done { text-align: center; padding: 24px 8px; display: grid; gap: 10px; justify-items: center; }
+.af-done-ico { font-size: 48px; line-height: 1; }
+.af-done h3 { margin: 0; }
+@media (max-width: 860px) {
+  .apply { grid-template-columns: 1fr; padding: 20px; gap: 20px; }
+}
+@media (max-width: 420px) { .af-plans { grid-template-columns: 1fr; } }

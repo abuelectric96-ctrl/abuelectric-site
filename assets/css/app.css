@@ -342,6 +342,7 @@ details[open] summary { margin-bottom: 14px; }
 .pill { font-size: 12px; font-weight: 800; padding: 2px 8px; border-radius: 99px; margin-left: 6px; background: var(--amber-soft); }
 .pill-verified { background: var(--green-soft); color: var(--green); }
 .pill-blocked { background: #fdecec; color: var(--red); }
+.pill-new { background: var(--volt-soft, #fff1c4); color: #7a5600; font-weight: 700; }
 .stat-tiles { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
 @media (max-width: 760px) { .stat-tiles { grid-template-columns: repeat(2, 1fr); } }
 .stat-tiles div { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 14px; }

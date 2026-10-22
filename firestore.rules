@@ -198,6 +198,25 @@ service cloud.firestore {
             || (resource != null && request.resource.data.lastReportAt == resource.data.lastReportAt));
     }
 
+    // Kursga arizalar: hamma yozishi mumkin (kirishsiz), lekin faqat yangi hujjat va qat'iy formatda.
+    // ID = telefon raqami (998XXXXXXXXX) → bitta raqamdan bitta ariza; o'qish/o'zgartirish faqat admin.
+    match /course_apps/{id} {
+      allow create: if id.matches('^998[0-9]{9}$')
+        && request.resource.data.keys().hasOnly(['name', 'phone', 'viloyat', 'address', 'plan', 'status', 'source', 'createdAt'])
+        && request.resource.data.phone == '+' + id
+        && str(request.resource.data.name, 3, 60)
+        && validRegion(request.resource.data.viloyat)
+        && str(request.resource.data.address, 3, 150)
+        && request.resource.data.plan in ['kurs_2h', 'kurs_1m']
+        && request.resource.data.status == 'new'
+        && (!('source' in request.resource.data) || str(request.resource.data.source, 0, 32))
+        && request.resource.data.createdAt == request.time;
+      allow read, delete: if isAdmin();
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'note', 'updatedAt'])
+        && request.resource.data.status in ['new', 'called', 'paid', 'cancelled'];
+    }
+
     // Adminlar ro'yxati — faqat Firebase konsolidan qo'lda qo'shiladi
     match /admins/{uid} {
       allow get: if signedIn() && request.auth.uid == uid;

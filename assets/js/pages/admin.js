@@ -11,7 +11,7 @@ const ms = (v) => (v == null ? 0 : typeof v === 'number' ? v : v.toMillis ? v.to
 const day = (t) => new Date(t).toISOString().slice(0, 10);
 const STATUS = { pending: 'Tasdiqlanmagan', verified: 'Tasdiqlangan', blocked: 'Bloklangan' };
 
-let fs, all = [], reports = [], tab = 'ustalar';
+let fs, all = [], reports = [], apps = [], tab = 'ustalar';
 const filt = { q: '', status: '', v: '' };
 
 function toast(msg, bad = false) {
@@ -23,10 +23,12 @@ function toast(msg, bad = false) {
 }
 
 async function loadAll() {
-  const [es, rs] = await Promise.all([
+  const [es, rs, as] = await Promise.all([
     fs.getDocs(fs.query(fs.collection(fs.db, 'electricians'), fs.limit(2000))),
     fs.getDocs(fs.query(fs.collection(fs.db, 'reports'), fs.where('status', '==', 'open'), fs.limit(200))),
+    fs.getDocs(fs.query(fs.collection(fs.db, 'course_apps'), fs.limit(1000))).catch((err) => { console.error(err); return { docs: [] }; }),
   ]);
+  apps = as.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a, b) => ms(b.createdAt) - ms(a.createdAt));
   all = es.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a, b) => ms(b.createdAt) - ms(a.createdAt));
   reports = rs.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a, b) => ms(b.createdAt) - ms(a.createdAt));
 }
@@ -37,6 +39,7 @@ function shell() {
   <div class="tabs" role="tablist">
     <button role="tab" data-tab="ustalar">Ustalar <span class="cnt">${all.length}</span></button>
     <button role="tab" data-tab="shikoyat">Shikoyatlar <span class="cnt${reports.length ? ' hot' : ''}">${reports.length}</span></button>
+    <button role="tab" data-tab="kurs">📚 Kurs arizalari <span class="cnt${apps.some((a) => a.status === 'new') ? ' hot' : ''}">${apps.filter((a) => a.status === 'new').length}</span></button>
     <button role="tab" data-tab="lead">Botga yozganlar <span class="cnt" id="leadCnt">…</span></button>
     <button role="tab" data-tab="stat">Statistika</button>
   </div>
@@ -52,6 +55,7 @@ function draw() {
   if (tab === 'ustalar') pane.innerHTML = listPane();
   if (tab === 'shikoyat') pane.innerHTML = reportsPane();
   if (tab === 'stat') pane.innerHTML = statPane();
+  if (tab === 'kurs') pane.innerHTML = appsPane();
   if (tab === 'lead') { pane.innerHTML = leadsPane(); if (!leads) loadLeads(); }
   bindPane(pane);
 }
@@ -215,6 +219,14 @@ function bindPane(pane) {
     b.disabled = true;
     try { await repAct(b.dataset.rep, b.dataset.id); shell(); } catch (err) { console.error(err); toast(friendlyError(err), true); b.disabled = false; }
   }));
+  pane.querySelectorAll('[data-app]').forEach((b) => b.addEventListener('click', async () => {
+    b.disabled = true;
+    try {
+      await fs.updateDoc(fs.doc(fs.db, 'course_apps', b.dataset.id), { status: b.dataset.app, updatedAt: fs.serverTimestamp() });
+      const a = apps.find((x) => x.id === b.dataset.id); if (a) a.status = b.dataset.app;
+      shell();
+    } catch (err) { console.error(err); toast(friendlyError(err), true); b.disabled = false; }
+  }));
   pane.querySelectorAll('[data-doc]').forEach((b) => b.addEventListener('click', async () => {
     try {
       const s = await fs.getDoc(fs.doc(fs.db, 'verifications', b.dataset.doc));
@@ -224,6 +236,30 @@ function bindPane(pane) {
       d.showModal();
     } catch (err) { console.error(err); toast("Hujjatni ochib bo'lmadi", true); }
   }));
+}
+
+// ---------- Kurs arizalari (saytdagi /kurs/ formasidan) ----------
+const APP_STATUS = { new: ['Yangi', 'pill-new'], called: ["Qo'ng'iroq qilindi", ''], paid: ["To'lov qildi", 'pill-verified'], cancelled: ['Bekor', 'pill-blocked'] };
+const PLAN_NAMES = { kurs_2h: "2 hafta · 1 800 000", kurs_1m: "1 oy · 2 100 000" };
+function appsPane() {
+  if (!apps.length) return `<div class="state"><b>Hali kursga ariza yo'q</b><p><a href="/kurs/" target="_blank">/kurs/</a> sahifasidagi forma orqali keladi.</p></div>`;
+  const cnt = (p) => apps.filter((a) => a.plan === p && a.status !== 'cancelled').length;
+  return `<p class="muted">Jami: <b>${apps.length}</b> · 2 haftalik: <b>${cnt('kurs_2h')}</b> · 1 oylik: <b>${cnt('kurs_1m')}</b> · to'lov qilgan: <b>${apps.filter((a) => a.status === 'paid').length}</b></p>
+  <div class="admin-list">${apps.map((a) => {
+    const [stName, stCls] = APP_STATUS[a.status] || APP_STATUS.new;
+    const btn = (st, label) => a.status === st ? '' : `<button class="btn btn-line btn-sm" data-app="${st}" data-id="${esc(a.id)}">${label}</button>`;
+    return `<article class="arow">
+      <div class="arow-main">
+        <b>${esc(a.name)}</b> <span class="pill pill-course">📚 ${esc(PLAN_NAMES[a.plan] || a.plan)}</span> <span class="pill ${stCls}">${stName}</span>
+        <div class="muted">${esc(fmtPhone(a.phone))} · ${esc(regionBySlug(a.viloyat)?.short || a.viloyat)}, ${esc(a.address)}</div>
+        <div class="muted small">Yozilgan: ${day(ms(a.createdAt))}${a.source ? ` · manba: ${esc(a.source)}` : ''}</div>
+      </div>
+      <div class="arow-act">
+        <a class="btn btn-call btn-sm" href="tel:${esc(a.phone)}">📞 Qo'ng'iroq</a>
+        ${btn('called', "✔ Gaplashildi")}${btn('paid', "💰 To'ladi")}${btn('cancelled', '✖ Bekor')}${a.status !== 'new' ? btn('new', '↺ Yangi') : ''}
+      </div>
+    </article>`;
+  }).join('')}</div>`;
 }
 
 // ---------- Botga yozganlar (raqam yuborgan, lekin anketani to'ldirmaganlar) ----------
