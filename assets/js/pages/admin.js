@@ -11,7 +11,7 @@ const ms = (v) => (v == null ? 0 : typeof v === 'number' ? v : v.toMillis ? v.to
 const day = (t) => new Date(t).toISOString().slice(0, 10);
 const STATUS = { pending: 'Tasdiqlanmagan', verified: 'Tasdiqlangan', blocked: 'Bloklangan' };
 
-let fs, all = [], reports = [], apps = [], tab = 'ustalar';
+let fs, all = [], reports = [], apps = [], appsErr = false, tab = 'ustalar';
 const filt = { q: '', status: '', v: '' };
 
 function toast(msg, bad = false) {
@@ -26,7 +26,7 @@ async function loadAll() {
   const [es, rs, as] = await Promise.all([
     fs.getDocs(fs.query(fs.collection(fs.db, 'electricians'), fs.limit(2000))),
     fs.getDocs(fs.query(fs.collection(fs.db, 'reports'), fs.where('status', '==', 'open'), fs.limit(200))),
-    fs.getDocs(fs.query(fs.collection(fs.db, 'course_apps'), fs.limit(1000))).catch((err) => { console.error(err); return { docs: [] }; }),
+    fs.getDocs(fs.query(fs.collection(fs.db, 'course_apps'), fs.limit(1000))).catch((err) => { console.error(err); appsErr = true; return { docs: [] }; }),
   ]);
   apps = as.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a, b) => ms(b.createdAt) - ms(a.createdAt));
   all = es.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a, b) => ms(b.createdAt) - ms(a.createdAt));
@@ -242,6 +242,7 @@ function bindPane(pane) {
 const APP_STATUS = { new: ['Yangi', 'pill-new'], called: ["Qo'ng'iroq qilindi", ''], paid: ["To'lov qildi", 'pill-verified'], cancelled: ['Bekor', 'pill-blocked'] };
 const PLAN_NAMES = { kurs_2h: "2 hafta · 1 800 000", kurs_1m: "1 oy · 2 100 000" };
 function appsPane() {
+  if (appsErr) return `<div class="state state-error"><b>⚠ Arizalarni o'qib bo'lmadi</b><p>Firebase'dagi qoidalar eski. <a href="/firestore.rules" target="_blank">firestore.rules</a> faylini Firebase console → Firestore → Rules ga joylab, Publish bosing.</p></div>`;
   if (!apps.length) return `<div class="state"><b>Hali kursga ariza yo'q</b><p><a href="/kurs/" target="_blank">/kurs/</a> sahifasidagi forma orqali keladi.</p></div>`;
   const cnt = (p) => apps.filter((a) => a.plan === p && a.status !== 'cancelled').length;
   return `<p class="muted">Jami: <b>${apps.length}</b> · 2 haftalik: <b>${cnt('kurs_2h')}</b> · 1 oylik: <b>${cnt('kurs_1m')}</b> · to'lov qilgan: <b>${apps.filter((a) => a.status === 'paid').length}</b></p>
