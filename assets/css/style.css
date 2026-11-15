@@ -11,6 +11,7 @@
   --green-50: #eff8f3;
   --volt: #ffc21a;
   --volt-soft: #fff1c4;
+  --volt-ink: #8a6200;
 
   --bg: #f6f5f0;
   --surface: #ffffff;
@@ -43,6 +44,8 @@
     --green-100: #143326;
     --green-50: #10241b;
     --volt-soft: #3a3110;
+  --volt-ink: var(--volt);
+    --volt-ink: var(--volt);
     --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 12px 32px -12px rgba(0, 0, 0, .5);
   }
 }
@@ -396,6 +399,7 @@ p { margin: 0; }
 .footer { padding: 56px 0 40px; color: var(--muted); font-size: 15px; }
 .footer-grid { display: flex; flex-wrap: wrap; gap: 24px 48px; justify-content: space-between; align-items: flex-start; padding-top: 32px; border-top: 1px solid var(--border); }
 .footer .brand { color: var(--text); }
+.footer .brand b span { color: var(--volt-ink); }
 .footer p { margin-top: 12px; max-width: 340px; }
 .footer nav { display: flex; flex-wrap: wrap; gap: 8px 22px; }
 .footer nav a { text-decoration: none; font-weight: 600; }

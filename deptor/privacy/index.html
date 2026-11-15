@@ -8,7 +8,7 @@
 <link rel="icon" href="/favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap"></noscript>
 <style>
   :root {
     --ground: #F6F5F1;
@@ -108,7 +108,7 @@
     <p class="wordmark">Deptor</p>
     <p class="eyebrow">Maxfiylik siyosati · Privacy policy</p>
     <h1>Qarz va xarajatlaringiz sizning telefoningizda</h1>
-    <p class="meta">Amal qilish sanasi: 2026-yil 13-oktabr · Oxirgi yangilanish: 2026-yil 18-oktabr</p>
+    <p class="meta">Amal qilish sanasi: 2026-yil 13-oktabr · Oxirgi yangilanish: 2026-yil 11-noyabr</p>
     <p class="langs"><a href="#uz">O'zbekcha</a> · <a href="#en">English</a></p>
   </div>
 </header>
@@ -167,6 +167,29 @@
       ma'lumotlaringizni to'liq o'chirish uchun <a href="mailto:abuustoz@gmail.com">abuustoz@gmail.com</a>
       ga yozing.</li>
       <li>Aloqa shifrlangan (HTTPS) kanal orqali o'tadi.</li>
+      <li><strong>Do'kon rejimi:</strong> do'kon yaratib sotuvchilarni qo'shsangiz, "do'kon qarzi" deb
+      belgilangan yozuvlarni do'konning barcha a'zolari ko'radi va o'zgartira oladi. A'zo bo'lish uchun
+      taklifni qabul qilish kerak. A'zo do'kondan chiqarilsa, u do'kon qarzlarini ko'rmay qoladi.</li>
+      <li><strong>O'zgarishlar tarixi:</strong> serverda qarzlar bo'yicha kim va qachon nima qilgani
+      (yozdi, tahrirladi, o'chirdi, qaytarish kiritdi) yozib boriladi. Tarixni qarzning yaratuvchi tomoni
+      ko'ra oladi. O'chirilgan qarzlar serverda saqlanadi va ularni tiklash mumkin.</li>
+      <li><strong>Rasmlar:</strong> qarzga rasm biriktirsangiz (masalan, qarz olgan odam, hujjat yoki
+      dalil), u telefonda saqlanadi. Agar qarz boshqa odam yoki do'kon bilan bog'langan bo'lsa, rasm serverga ham
+      yuklanadi va faqat o'sha qarzga ruxsati bor odamlarga ko'rinadi. "Mijoz" va "Hujjat" rasmlari faqat
+      do'kon a'zolariga ko'rinadi, qarshi tomonga yuborilmaydi. Rasm olish uchun ilova telefonning
+      standart kamera yoki galereya oynasini ochadi, ilova kamera yoki galereyaga doimiy ruxsat
+      so'ramaydi. Rasmni o'chirsangiz, u serverdan ham o'chadi.</li>
+      <li><strong>Nasiya va mijoz hujjatlari:</strong> do'kon rejimida nasiya (bo'lib to'lash) savdosini
+      yozsangiz, tovarlar, to'lov grafigi va ixtiyoriy ravishda mijozning hujjat raqamlari (ID pasport,
+      chet el pasporti, haydovchilik guvohnomasi, avtomobil raqami va texnik pasport raqami, manzil) hamda
+      shu hujjatlarning rasmlari saqlanadi. Qaysi hujjatlar majburiyligini do'kon egasi belgilaydi. Bu
+      ma'lumotlar faqat do'kon a'zolariga ko'rinadi, mijozga va boshqa tomonlarga yuborilmaydi, reklama
+      yoki boshqa maqsadda ishlatilmaydi. Ilova ularni davlat organlariga (jumladan MIBga) yubormaydi.
+      Shartnoma (PDF) namunasi telefoningizda yaratiladi va uni faqat siz o'zingiz tanlagan ilova orqali
+      yuborasiz.</li>
+      <li><strong>Zaxira nusxa:</strong> server ma'lumotlari har kuni nusxalanadi. Tashqi nusxa shifrlangan
+      holda dasturchining shaxsiy Telegram chatiga yuboriladi. Nusxalar ma'lumotlarni tiklash uchun
+      ishlatiladi, boshqa maqsadda emas.</li>
     </ul>
   </section>
 
@@ -296,6 +319,27 @@
       other party too. "Sign out" revokes your sign-in. To have all your server-side data
       fully erased, email <a href="mailto:abuustoz@gmail.com">abuustoz@gmail.com</a>.</li>
       <li>Communication uses an encrypted (HTTPS) connection.</li>
+      <li><strong>Shop mode:</strong> if you create a shop and add sellers, records marked as "shop debt" are
+      visible and editable by all shop members. Joining requires accepting an invitation. A removed member
+      stops seeing the shop's debts.</li>
+      <li><strong>Change history:</strong> the server records who did what and when on a debt (created,
+      edited, deleted, added a repayment). The history is visible to the debt's creating side. Deleted debts are
+      kept on the server and can be restored.</li>
+      <li><strong>Photos:</strong> if you attach a photo to a debt (for example the borrower, a document or
+      proof), it is stored on your phone. If the debt is linked with another person or a shop, the photo is also
+      uploaded to the server and shown only to people who have access to that debt. "Customer" and "Document"
+      photos are visible only to shop members and are not sent to the other party. To take a photo, the app
+      opens the phone's standard camera or gallery picker and does not request ongoing camera or gallery
+      permission. If you delete a photo, it is removed from the server as well.</li>
+      <li><strong>Credit sales and customer documents:</strong> in shop mode, when you record a credit
+      (installment) sale, the items, the payment schedule and, optionally, the customer's document details
+      (ID card, foreign passport, driver's license, vehicle plate and registration numbers, address) and
+      photos of those documents are stored. The shop owner decides which documents are required. This data
+      is visible only to shop members, is not sent to the customer or other parties, and is not used for
+      advertising or any other purpose. The app does not send it to any authority. A sample contract (PDF) is
+      generated on your phone and you share it only through the app you choose.</li>
+      <li><strong>Backups:</strong> server data is backed up daily. An off-site copy is sent, encrypted, to
+      the developer's private Telegram chat. Backups are used only to restore data.</li>
     </ul>
   </section>
 
